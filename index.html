@@ -113,7 +113,7 @@
 
     .lang-btn.active {
       background: var(--accent);
-      color: #09090b;
+      color: var(--bg);
     }
 
     /* ===== NAVBAR ===== */
@@ -187,7 +187,6 @@
       color: var(--text-muted);
       padding: 12px 16px;
       border-radius: 10px;
-      display: block;
       min-height: 44px;
       display: flex;
       align-items: center;
@@ -197,7 +196,7 @@
     .nav-mobile-menu .nav-mobile-cta {
       margin-top: 6px;
       background: var(--accent);
-      color: #09090b;
+      color: var(--bg);
       font-weight: 700;
       font-size: 14px;
       border-radius: 10px;
@@ -234,7 +233,7 @@
       font-weight: 700;
       padding: 9px 22px;
       background: var(--accent);
-      color: #09090b;
+      color: var(--bg);
       border-radius: 100px;
       transition: opacity 0.2s, transform 0.15s;
     }
@@ -392,7 +391,7 @@
       gap: 8px;
       padding: 14px 28px;
       background: var(--accent);
-      color: #09090b;
+      color: var(--bg);
       font-weight: 700;
       font-size: 15px;
       border-radius: 8px;
@@ -428,11 +427,12 @@
       width: 32px;
       height: 1px;
       background: var(--text-dim);
+      transform-origin: left;
       animation: pulse-line 2.2s ease-in-out infinite;
     }
     @keyframes pulse-line {
-      0%, 100% { width: 16px; opacity: 0.3; }
-      50%       { width: 32px; opacity: 0.7; }
+      0%, 100% { transform: scaleX(0.5); opacity: 0.3; }
+      50%       { transform: scaleX(1);   opacity: 0.7; }
     }
 
     /* Dead CSS removed: .hero-right, .hero-stats, .stat, .stat-number, .stat-label,
@@ -492,6 +492,7 @@
       display: grid;
       grid-template-columns: 56px 1fr auto;
       align-items: start;
+      cursor: pointer;
       gap: 24px;
       padding: 36px 0;
       border-bottom: 1px solid var(--border);
@@ -520,21 +521,6 @@
       line-height: 1.65;
       max-width: 500px;
     }
-    .service-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 14px;
-    }
-    .tag {
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      color: var(--text-muted);
-    }
     .service-arrow {
       font-size: 18px;
       color: var(--text-dim);
@@ -542,6 +528,49 @@
       transition: color 0.2s, transform 0.2s;
     }
     .service-item:hover .service-arrow { color: var(--accent); transform: translate(3px, -3px); }
+    .service-item--open .service-arrow { color: var(--accent); transform: rotate(45deg) !important; }
+
+    .service-details {
+      grid-column: 2 / 3;
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.32s ease;
+      overflow: hidden;
+    }
+    .service-item--open .service-details {
+      grid-template-rows: 1fr;
+    }
+    .service-details-inner {
+      overflow: hidden;
+      padding-bottom: 0;
+      transition: padding-bottom 0.32s ease;
+    }
+    .service-item--open .service-details-inner {
+      padding-bottom: 20px;
+    }
+    .service-details-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .service-details-list li {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 14px;
+      letter-spacing: 0.01em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .service-item--open .service-details-list li {
+      border-color: var(--accent-border);
+      color: var(--text);
+    }
 
     /* ===== PROCESS ===== */
     .process {
@@ -599,7 +628,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #09090b;
+      color: var(--bg);
       background: var(--accent);
       padding: 4px 10px;
       border-radius: 100px;
@@ -679,7 +708,7 @@
     .pricing-card.featured .pricing-cta {
       background: var(--accent);
       border-color: var(--accent);
-      color: #09090b;
+      color: var(--bg);
     }
     .pricing-card.featured .pricing-cta:hover { opacity: 0.9; }
     .pricing-note { text-align: center; margin-top: 28px; font-size: 14px; color: var(--text-muted); }
@@ -889,24 +918,6 @@
       background: linear-gradient(to top, var(--surface), transparent);
       pointer-events: none;
     }
-    .portrait-tags {
-      position: absolute;
-      bottom: 18px; left: 18px; right: 18px;
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      z-index: 1;
-    }
-    .portrait-tag {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 12px;
-      background: rgba(9, 9, 11, 0.92);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      color: var(--text-muted);
-      backdrop-filter: blur(12px);
-    }
     .about-label { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
     .about-heading { font-size: clamp(30px, 3.5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 24px; }
     .about-bio { font-size: 16px; color: var(--text-muted); line-height: 1.8; margin-bottom: 16px; }
@@ -965,21 +976,6 @@
       line-height: 1.7;
       color: var(--text-muted);
       margin-bottom: 24px;
-    }
-    .team-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .team-tag {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      padding: 5px 14px;
-      border-radius: 100px;
-      border: 1px solid var(--accent-border);
-      color: var(--accent);
-      background: var(--accent-dim);
     }
     .team-footer {
       font-size: 17px;
@@ -1052,7 +1048,7 @@
       align-self: flex-start;
       padding: 14px 28px;
       background: var(--accent);
-      color: #09090b;
+      color: var(--bg);
       font-family: 'Outfit', sans-serif;
       font-size: 15px;
       font-weight: 700;
@@ -1072,6 +1068,15 @@
       border: 1px solid var(--accent-border);
       border-radius: 8px;
       background: var(--accent-dim);
+    }
+    .form-error {
+      display: none;
+      font-size: 14px;
+      color: #f87171;
+      padding: 14px 16px;
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 8px;
+      background: rgba(248, 113, 113, 0.08);
     }
 
     /* ===== FOOTER ===== */
@@ -1113,6 +1118,7 @@
       .services-header { grid-template-columns: 1fr; gap: 28px; }
       .process-grid { grid-template-columns: 1fr 1fr; }
       .pricing-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
       .about-minimal { grid-template-columns: 1fr; gap: 32px; }
       .about-stats { grid-template-columns: 1fr; gap: 24px; }
       .about-stat-item { border-right: none; margin-right: 0; padding-right: 0; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
@@ -1191,8 +1197,8 @@
 
   <!-- ===== LANGUAGE TOGGLE ===== -->
   <div class="lang-toggle" role="group" aria-label="Wybór języka">
-    <button class="lang-btn active" id="btn-pl" onclick="setLang('pl')" aria-pressed="true">PL</button>
-    <button class="lang-btn"        id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
+    <button class="lang-btn active" id="btn-pl" aria-pressed="true">PL</button>
+    <button class="lang-btn"        id="btn-en" aria-pressed="false">EN</button>
   </div>
 
 
@@ -1225,8 +1231,8 @@
     <a href="#team"      data-pl="Zespół"         data-en="Team">Zespół</a>
     <a href="#contact"   data-pl="Napisz do mnie" data-en="Get in touch" class="nav-mobile-cta">Napisz do mnie</a>
     <div class="nav-mobile-lang" role="group" aria-label="Wybór języka">
-      <button class="lang-btn active" id="btn-pl-m" onclick="setLang('pl')" aria-pressed="true">PL</button>
-      <button class="lang-btn"        id="btn-en-m" onclick="setLang('en')" aria-pressed="false">EN</button>
+      <button class="lang-btn active" id="btn-pl-m" aria-pressed="true">PL</button>
+      <button class="lang-btn"        id="btn-en-m" aria-pressed="false">EN</button>
     </div>
   </div>
 
@@ -1303,6 +1309,18 @@
             <p class="service-desc" data-pl="Twoja marka w internecie — jedna strona, która od razu mówi kim jesteś i co oferujesz. Płynne animacje, grafiki, nowoczesny design. Gotowa w tydzień." data-en="Your brand online — one page that instantly shows who you are and what you offer. Smooth animations, visuals, modern design. Ready in a week.">
               Twoja marka w internecie — jedna strona, która od razu mówi kim jesteś i co oferujesz. Płynne animacje, grafiki, nowoczesny design. Gotowa w tydzień.
             </p>
+            <div class="service-details">
+              <div class="service-details-inner">
+                <ul class="service-details-list">
+                  <li>1 strona (one-page)</li>
+                  <li>Responsywna na mobile</li>
+                  <li>Własny kod HTML/CSS/JS</li>
+                  <li>Płynne animacje scroll</li>
+                  <li>Formularz kontaktowy</li>
+                  <li>Gotowa w 7 dni</li>
+                </ul>
+              </div>
+            </div>
           </div>
           <span class="service-arrow">&#8599;</span>
         </div>
@@ -1314,6 +1332,18 @@
             <p class="service-desc" data-pl="Kilka podstron, które opowiadają pełną historię Twojej firmy — oferta, portfolio, o mnie, kontakt. Zbudowana na własnym kodzie, nie na WordPressie." data-en="A multi-page site that tells your full story — services, portfolio, about, contact. Built on clean custom code, not WordPress.">
               Kilka podstron, które opowiadają pełną historię Twojej firmy — oferta, portfolio, o mnie, kontakt. Zbudowana na własnym kodzie, nie na WordPressie.
             </p>
+            <div class="service-details">
+              <div class="service-details-inner">
+                <ul class="service-details-list">
+                  <li>3–6 podstron</li>
+                  <li>SEO-ready struktura</li>
+                  <li>Bez WordPressa</li>
+                  <li>Własna domena w cenie</li>
+                  <li>Hosting przez rok</li>
+                  <li>Czas realizacji: 2–3 tyg.</li>
+                </ul>
+              </div>
+            </div>
           </div>
           <span class="service-arrow">&#8599;</span>
         </div>
@@ -1325,6 +1355,17 @@
             <p class="service-desc" data-pl="Profesjonalne prezentacje, oferty handlowe i broszury PDF — materiały, które robią wrażenie i pomagają zamknąć sprzedaż." data-en="Professional presentations, sales proposals, and PDF brochures — materials that impress clients and help close deals.">
               Profesjonalne prezentacje, oferty handlowe i broszury PDF — materiały, które robią wrażenie i pomagają zamknąć sprzedaż.
             </p>
+            <div class="service-details">
+              <div class="service-details-inner">
+                <ul class="service-details-list">
+                  <li>Oferta handlowa PDF</li>
+                  <li>Prezentacja firmowa</li>
+                  <li>Projekt graficzny od zera</li>
+                  <li>Gotowe do druku i online</li>
+                  <li>2 rundy poprawek</li>
+                </ul>
+              </div>
+            </div>
           </div>
           <span class="service-arrow">&#8599;</span>
         </div>
@@ -1401,7 +1442,7 @@
             <li><span class="check"></span><span data-pl="Google Analytics" data-en="Google Analytics">Google Analytics</span></li>
             <li><span class="check"></span><span data-pl="7 dni na poprawki" data-en="7-day revision window">7 dni na poprawki</span></li>
           </ul>
-          <a href="#contact" class="pricing-cta" data-pl="Zacznij" data-en="Get started">Zacznij</a>
+          <a href="https://payment-links.mollie.com/payment/eoDZVmoAPRroKtxVxB4fS" class="pricing-cta" target="_blank" rel="noopener noreferrer" data-pl="Zamów — zapłać zaliczkę 850 zł →" data-en="Order — pay 50% deposit →">Zamów — zapłać zaliczkę 850 zł &rarr;</a>
         </div>
 
         <!-- Growth -->
@@ -1421,7 +1462,7 @@
             <li><span class="check"></span><span data-pl="Integracja e-mail marketingu" data-en="Email marketing integration">Integracja e-mail marketingu</span></li>
             <li><span class="check"></span><span data-pl="14 dni wsparcia w cenie" data-en="14-day support included">14 dni wsparcia w cenie</span></li>
           </ul>
-          <a href="#contact" class="pricing-cta" data-pl="Zacznij" data-en="Get started">Zacznij</a>
+          <a href="https://payment-links.mollie.com/payment/EZUzjf7qnGmXz59pLBvnc" class="pricing-cta" target="_blank" rel="noopener noreferrer" data-pl="Zamów — zapłać zaliczkę 1600 zł →" data-en="Order — pay 50% deposit →">Zamów — zapłać zaliczkę 1600 zł &rarr;</a>
         </div>
 
         <!-- Materials -->
@@ -1698,6 +1739,7 @@
           <div class="form-success" id="form-success" role="status" aria-live="polite" data-pl="Wiadomość wysłana — odezwę się w ciągu 24 godzin." data-en="Message sent — I'll be in touch within 24 hours.">
             Wiadomość wysłana &mdash; odezwę się w ciągu 24 godzin.
           </div>
+          <div class="form-error" id="form-error" role="alert" aria-live="assertive"></div>
         </form>
 
       </div>
@@ -1720,7 +1762,7 @@
           <li><a href="#pricing"   data-pl="Cennik"        data-en="Pricing">Cennik</a></li>
           <li><a href="#about"     data-pl="O mnie"        data-en="About">O mnie</a></li>
           <li><a href="#contact"   data-pl="Kontakt"       data-en="Contact">Kontakt</a></li>
-          <li><a href="https://www.instagram.com/buildbykey" target="_blank" rel="noopener" aria-label="Instagram BuildByKey">Instagram</a></li>
+          <li><a href="https://www.instagram.com/buildbykey" target="_blank" rel="noopener noreferrer" aria-label="Instagram BuildByKey">Instagram</a></li>
           <li><a href="mailto:buildbykey@gmail.com">buildbykey@gmail.com</a></li>
         </ul>
         <span class="footer-copy">&copy; 2026 BuildByKey.</span>
@@ -1731,6 +1773,11 @@
 
   <script>
     /* ===== LANGUAGE SYSTEM ===== */
+    document.getElementById('btn-pl').addEventListener('click', () => setLang('pl'));
+    document.getElementById('btn-en').addEventListener('click', () => setLang('en'));
+    document.getElementById('btn-pl-m').addEventListener('click', () => setLang('pl'));
+    document.getElementById('btn-en-m').addEventListener('click', () => setLang('en'));
+
     const PRICES = {
       pl: { p1: '1&nbsp;500&nbsp;z&#x142;',    p2: '3&nbsp;000&nbsp;z&#x142;',       p3: 'od&nbsp;700&nbsp;z&#x142;' },
       en: { p1: '&euro;350',                  p2: '&euro;700',                        p3: 'from&nbsp;&euro;165'       }
@@ -1835,11 +1882,23 @@
     /* ===== SCROLL REVEAL ===== */
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
       });
     }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 
     document.querySelectorAll('.fade-up').forEach(el => revealObserver.observe(el));
+
+    /* ===== SERVICE ACCORDION ===== */
+    document.querySelectorAll('.service-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const isOpen = item.classList.contains('service-item--open');
+        document.querySelectorAll('.service-item').forEach(i => i.classList.remove('service-item--open'));
+        if (!isOpen) item.classList.add('service-item--open');
+      });
+    });
 
     /* ===== SMOOTH SCROLL ===== */
     document.querySelectorAll('a[href^="#"]').forEach(link => {
@@ -1945,8 +2004,19 @@
       e.preventDefault();
       const btn = document.getElementById('form-btn');
       const success = document.getElementById('form-success');
+      const errorEl = document.getElementById('form-error');
+      errorEl.style.display = 'none';
       btn.innerHTML = currentLang === 'pl' ? 'Wysyłanie&hellip;' : 'Sending&hellip;';
       btn.disabled = true;
+
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+        errorEl.setAttribute('tabindex', '-1');
+        errorEl.focus();
+        btn.innerHTML = currentLang === 'pl' ? 'Wyślij wiadomość →' : 'Send message →';
+        btn.disabled = false;
+      }
 
       try {
         const res = await fetch(this.action, {
@@ -1965,14 +2035,14 @@
           this.reset();
         } else {
           await res.json().catch(() => ({}));
-          btn.innerHTML = currentLang === 'pl' ? 'Wyślij wiadomość &rarr;' : 'Send message &rarr;';
-          btn.disabled = false;
-          alert(currentLang === 'pl' ? 'Coś poszło nie tak. Napisz bezpośrednio na buildbykey@gmail.com' : 'Something went wrong. Email us directly at buildbykey@gmail.com');
+          showError(currentLang === 'pl'
+            ? 'Coś poszło nie tak. Napisz bezpośrednio na buildbykey@gmail.com'
+            : 'Something went wrong. Email us directly at buildbykey@gmail.com');
         }
       } catch (err) {
-        btn.innerHTML = currentLang === 'pl' ? 'Wyślij wiadomość &rarr;' : 'Send message &rarr;';
-        btn.disabled = false;
-        alert(currentLang === 'pl' ? 'Brak połączenia. Napisz na buildbykey@gmail.com' : 'No connection. Email us at buildbykey@gmail.com');
+        showError(currentLang === 'pl'
+          ? 'Brak połączenia. Napisz na buildbykey@gmail.com'
+          : 'No connection. Email us at buildbykey@gmail.com');
       }
     });
   </script>

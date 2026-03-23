@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kosmos — Prezentacja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #05050a;
+      --surface:  #0c0c14;
+      --border:   rgba(255,255,255,0.07);
+      --text:     #f0effa;
+      --muted:    #7c7a96;
+      --dim:      #2e2d3d;
+      --accent:   #c8a459;
+      --accent2:  #7b6cd4;
+      --accent3:  #3dbcf7;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ── Stars canvas ── */
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Slide deck ── */
+    .deck {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 80px;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .slide.exit {
+      opacity: 0;
+      transform: translateY(-28px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    /* ── Label ── */
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* ── Headlines ── */
+    h1 {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.0;
+      max-width: 14ch;
+    }
+
+    h2 {
+      font-size: clamp(36px, 4.5vw, 64px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      max-width: 20ch;
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 60ch;
+      margin-top: 20px;
+    }
+
+    /* ── Accent words ── */
+    .hi { color: var(--accent); }
+    .hi2 { color: var(--accent3); }
+    .hi3 { color: var(--accent2); }
+
+    /* ── Title slide ── */
+    .slide-title { align-items: flex-start; justify-content: center; }
+    .slide-title h1 { margin-top: 8px; }
+
+    .subtitle {
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 28px;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Split layout ── */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .split-reverse {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .split-reverse > *:first-child { order: 2; }
+    .split-reverse > *:last-child  { order: 1; }
+
+    /* ── Visual orbs / planet shapes ── */
+    .orb {
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .orb-sun {
+      background: radial-gradient(circle at 35% 35%, #fff4cc, #f5c842 40%, #c87c10 75%, #3a1800);
+      box-shadow: 0 0 80px rgba(248, 200, 80, 0.45), 0 0 160px rgba(200, 120, 16, 0.2);
+      animation: pulse-sun 4s ease-in-out infinite;
+    }
+
+    .orb-earth {
+      background: radial-gradient(circle at 38% 32%, #b8f0ff, #1a8cff 30%, #0a4caa 60%, #072a6e);
+      box-shadow: 0 0 60px rgba(26, 140, 255, 0.35);
+      overflow: hidden;
+      animation: spin-slow 18s linear infinite;
+    }
+    .orb-earth::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 15%;
+      width: 45%;
+      height: 30%;
+      background: rgba(80, 200, 100, 0.7);
+      border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%;
+    }
+    .orb-earth::after {
+      content: '';
+      position: absolute;
+      bottom: 22%;
+      right: 14%;
+      width: 28%;
+      height: 20%;
+      background: rgba(80, 200, 100, 0.55);
+      border-radius: 50% 50% 40% 60%;
+    }
+
+    .orb-mars {
+      background: radial-gradient(circle at 36% 33%, #ffc0a0, #d45a2e 40%, #842010 75%, #2a0a04);
+      box-shadow: 0 0 60px rgba(212, 90, 46, 0.35);
+      animation: spin-slow 22s linear infinite;
+    }
+
+    .orb-saturn {
+      background: radial-gradient(circle at 36% 33%, #ffe9b8, #c8a45a 45%, #8a6030 75%, #2a1800);
+      box-shadow: 0 0 60px rgba(200, 164, 90, 0.3);
+      animation: spin-slow 28s linear infinite;
+    }
+
+    .ring-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring {
+      position: absolute;
+      width: 480px;
+      height: 100px;
+      border-radius: 50%;
+      border: 14px solid rgba(200, 164, 89, 0.45);
+      box-shadow: 0 0 0 5px rgba(200, 164, 89, 0.12);
+      transform: rotateX(72deg);
+      pointer-events: none;
+    }
+
+    @keyframes pulse-sun {
+      0%, 100% { box-shadow: 0 0 80px rgba(248, 200, 80, 0.45), 0 0 160px rgba(200, 120, 16, 0.2); }
+      50%       { box-shadow: 0 0 120px rgba(248, 200, 80, 0.65), 0 0 240px rgba(200, 120, 16, 0.3); }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── Stat grid ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 36px;
+    }
+
+    .stat-item {
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+    .stat-value {
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── Timeline / list ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 16px;
+    }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .tl-year {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      padding-top: 3px;
+    }
+    .tl-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    .tl-text strong { color: var(--text); font-weight: 600; }
+
+    /* ── Fact columns ── */
+    .fact-col {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .fact-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .fact-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(200, 164, 89, 0.1);
+      border: 1px solid rgba(200, 164, 89, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .fact-body h3 { margin-bottom: 6px; }
+    .fact-body p  { margin-top: 0; font-size: 15px; }
+
+    /* ── Full-width quote ── */
+    .slide-quote {
+      align-items: center;
+      text-align: center;
+    }
+    blockquote {
+      font-size: clamp(24px, 3vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.25;
+      max-width: 22ch;
+      color: var(--text);
+    }
+    blockquote::before { content: '\201C'; color: var(--accent); }
+    blockquote::after  { content: '\201D'; color: var(--accent); }
+    .quote-source {
+      margin-top: 28px;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── End slide ── */
+    .slide-end {
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(123, 108, 212, 0.08), transparent);
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(12, 12, 20, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 24px;
+      backdrop-filter: blur(20px);
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-btn:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+    .nav-counter {
+      font-size: 13px;
+      color: var(--muted);
+      min-width: 48px;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    .dot-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--dim);
+      transition: background 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .dot.active {
+      background: var(--accent);
+      transform: scale(1.4);
+    }
+
+    /* ── Slide number badge ── */
+    .slide-num {
+      position: fixed;
+      top: 40px;
+      right: 80px;
+      z-index: 10;
+      font-size: 12px;
+      color: var(--dim);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Progress bar ── */
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 20;
+      transition: width 0.4s ease;
+    }
+
+    @media (max-width: 768px) {
+      .slide { padding: 40px 28px; }
+      .split, .split-reverse { grid-template-columns: 1fr; gap: 32px; }
+      .split-reverse > *:first-child { order: 1; }
+      .split-reverse > *:last-child  { order: 2; }
+      .orb { width: 180px; height: 180px; margin: 0 auto; }
+      .ring { display: none; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" style="position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(9,9,11,0.85);backdrop-filter:blur(12px);border:1px solid rgba(200,164,89,0.3);border-radius:100px;color:#c8a459;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;text-decoration:none;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">← BuildByKey</a>
+
+<canvas id="stars"></canvas>
+<div class="progress" id="progress"></div>
+<div class="slide-num" id="slideNum">1 / 9</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. Tytuł -->
+  <div class="slide slide-title active" data-index="0">
+    <div class="label">Prezentacja naukowa</div>
+    <h1><span class="hi">Kosmos</span><br/>i jego<br/>tajemnice</h1>
+    <p class="subtitle">Podróż przez Układ Słoneczny, gwiazdy<br/>i granice ludzkiej wiedzy</p>
+  </div>
+
+  <!-- 2. Słońce -->
+  <div class="slide" data-index="1">
+    <div class="split">
+      <div>
+        <div class="label">Nasza gwiazda</div>
+        <h2>Słońce — serce Układu Słonecznego</h2>
+        <p>Słońce to gwiazda typu G, która stanowi 99,86% całkowitej masy Układu Słonecznego. Każdej sekundy przetwarza 600 milionów ton wodoru w hel w procesie syntezy jądrowej.</p>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-value hi">1,4M</div>
+            <div class="stat-label">km — średnica Słońca</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">5 778</div>
+            <div class="stat-label">K — temperatura powierzchni</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">8,3</div>
+            <div class="stat-label">min — czas dotarcia światła do Ziemi</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value hi">4,6<span style="font-size:0.55em">mld</span></div>
+            <div class="stat-label">lat — wiek Słońca</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div class="orb orb-sun"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Ziemia -->
+  <div class="slide" data-index="2">
+    <div class="split-reverse">
+      <div>
+        <div class="label">Nasza planeta</div>
+        <h2>Ziemia — <span class="hi2">jedyna znana</span> oaza życia</h2>
+        <p>Ziemia jest trzecią planetą od Słońca i jedynym ciałem niebieskim, na którym potwierdzono istnienie życia. Jej unikalna atmosfera, ciekła woda i magnetosfera tworzą idealne warunki.</p>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-value hi2">71%</div>
+            <div class="stat-label">powierzchni pokrytej wodą</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">365,25</div>
+            <div class="stat-label">dób — rok ziemski</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">6 371</div>
+            <div class="stat-label">km — promień Ziemi</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value hi2">~8</div>
+            <div class="stat-label">mld ludzi na powierzchni</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div class="orb orb-earth"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Mars -->
+  <div class="slide" data-index="3">
+    <div class="split">
+      <div>
+        <div class="label">Czerwona planeta</div>
+        <h2>Mars — kolejny<br/>krok ludzkości</h2>
+        <p>Mars jest najbardziej zbadaną planetą po Ziemi. Jej rdzawa barwa pochodzi od tlenku żelaza (rdzy) na powierzchni. Łaziki NASA i ESA odkryły dowody na istnienie wody w przeszłości.</p>
+        <div class="fact-col" style="margin-top:28px;">
+          <div class="fact-item">
+            <div class="fact-icon">&#9968;</div>
+            <div class="fact-body">
+              <h3>Olympus Mons</h3>
+              <p>Najwyższy wulkan w Układzie Słonecznym — 22 km nad poziomem marsjańskim, 3× wyższy niż Everest.</p>
+            </div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-icon">&#9832;</div>
+            <div class="fact-body">
+              <h3>Dzień na Marsie</h3>
+              <p>Sol trwa 24h 37min — zaledwie 37 minut dłużej niż ziemska doba.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div class="orb orb-mars"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Saturn -->
+  <div class="slide" data-index="4">
+    <div class="split-reverse">
+      <div>
+        <div class="label">Gazowy olbrzym</div>
+        <h2>Saturn — król<br/><span class="hi">pierścieni</span></h2>
+        <p>Pierścienie Saturna rozciągają się na 282 000 km, lecz mają zaledwie kilkadziesiąt metrów grubości. Składają się głównie z lodu i skał. Saturn jest tak lekki, że unosiłby się na wodzie.</p>
+        <div class="stat-grid" style="margin-top:32px;">
+          <div class="stat-item">
+            <div class="stat-value hi">116 460</div>
+            <div class="stat-label">km — równikowy promień</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">146</div>
+            <div class="stat-label">znanych księżyców</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value hi">29,5</div>
+            <div class="stat-label">lat — rok saturnowy</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0,69</div>
+            <div class="stat-label">g/cm³ — gęstość (mniejsza niż wody)</div>
+          </div>
+        </div>
+      </div>
+      <div class="ring-wrap" style="justify-content:center;">
+        <div class="orb orb-saturn"></div>
+        <div class="ring"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Czarne dziury -->
+  <div class="slide" data-index="5">
+    <div style="max-width:860px;">
+      <div class="label">Ekstrema wszechświata</div>
+      <h2>Czarne dziury — <span class="hi3">granica</span> fizyki</h2>
+      <p>Czarna dziura to region przestrzeni, gdzie grawitacja jest tak silna, że nic — nawet światło — nie może jej opuścić. Horyzont zdarzeń wyznacza punkt bez powrotu.</p>
+      <div class="timeline" style="margin-top:36px;">
+        <div class="tl-item">
+          <div class="tl-year">1916</div>
+          <div class="tl-text"><strong>Karl Schwarzschild</strong> oblicza promień krytyczny masy — pierwsze matematyczne rozwiązanie równań Einsteina opisujące czarną dziurę.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1971</div>
+          <div class="tl-text"><strong>Cygnus X-1</strong> — pierwsze silne obserwacyjne dowody na istnienie czarnych dziur w naszej galaktyce.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2019</div>
+          <div class="tl-text"><strong>Pierwszy obraz czarnej dziury</strong> — Teleskop Horyzontu Zdarzeń uchwycił M87*, odległą o 55 mln lat świetlnych.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2022</div>
+          <div class="tl-text"><strong>Sagittarius A*</strong> — sfotografowano czarną dziurę w centrum Drogi Mlecznej, 4 mln razy masywniejszą od Słońca.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Cytat -->
+  <div class="slide slide-quote" data-index="6">
+    <div class="label" style="justify-content:center;">Perspektywa</div>
+    <blockquote>
+      Gdzieś coś niesamowitego czeka na odkrycie.
+    </blockquote>
+    <div class="quote-source">— Carl Sagan, astronom i popularyzator nauki</div>
+    <p style="margin-top:48px;text-align:center;">Wszechświat ma 13,8 miliarda lat i liczy co najmniej <span class="hi">2 biliony galaktyk</span>.<br/>Każda galaktyka zawiera średnio 100–400 miliardów gwiazd.</p>
+  </div>
+
+  <!-- 8. Przyszłość eksploracji -->
+  <div class="slide" data-index="7">
+    <div class="label">Co nas czeka</div>
+    <h2>Przyszłość eksploracji kosmosu</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;margin-top:40px;">
+      <div>
+        <div class="tl-year" style="margin-bottom:12px;">2030s</div>
+        <h3>Człowiek na Marsie</h3>
+        <p style="font-size:15px;margin-top:8px;">NASA Artemis i SpaceX Starship planują loty załogowe na Księżyc i Marsa w tej dekadzie.</p>
+      </div>
+      <div>
+        <div class="tl-year" style="margin-bottom:12px;">2040s</div>
+        <h3>Bazy na Księżycu</h3>
+        <p style="font-size:15px;margin-top:8px;">Stałe siedziby na powierzchni Księżyca jako punkt startowy dla dalszej eksploracji.</p>
+      </div>
+      <div>
+        <div class="tl-year" style="margin-bottom:12px;">2060+</div>
+        <h3>Teleskopy nowej ery</h3>
+        <p style="font-size:15px;margin-top:8px;">Następcy Webba będą szukać biosygnatur w atmosferach planet pozasłonecznych.</p>
+      </div>
+    </div>
+    <p style="margin-top:48px;max-width:80ch;">Teleskop Jamesa Webba, aktywny od 2022 roku, już teraz obserwuje galaktyki sprzed zaledwie<br/><span class="hi">400 milionów lat po Wielkim Wybuchu</span> — patrząc w przeszłość wszechświata.</p>
+  </div>
+
+  <!-- 9. Koniec -->
+  <div class="slide slide-end" data-index="8">
+    <div class="label" style="justify-content:center;">Dziękuję</div>
+    <h1 style="text-align:center;max-width:100%;">Kosmos nas<br/><span class="hi">wciąż zaskakuje</span></h1>
+    <p style="text-align:center;margin:28px auto 0;max-width:50ch;">Jesteśmy pierwszym gatunkiem zdolnym do zrozumienia wszechświata, w którym żyjemy. To zobowiązuje i inspiruje.</p>
+    <div style="margin-top:56px;display:flex;gap:48px;justify-content:center;">
+      <div class="stat-item" style="text-align:center;border-top:none;border-bottom:1px solid var(--border);padding:0 0 20px;">
+        <div class="stat-value">13,8<span style="font-size:0.5em;color:var(--muted)"> mld lat</span></div>
+        <div class="stat-label">wiek wszechświata</div>
+      </div>
+      <div class="stat-item" style="text-align:center;border-top:none;border-bottom:1px solid var(--border);padding:0 0 20px;">
+        <div class="stat-value hi">&#8734;</div>
+        <div class="stat-label">możliwości odkryć</div>
+      </div>
+      <div class="stat-item" style="text-align:center;border-top:none;border-bottom:1px solid var(--border);padding:0 0 20px;">
+        <div class="stat-value hi3">1</div>
+        <div class="stat-label">planeta, którą musimy chronić</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<nav class="nav">
+  <button class="nav-btn" id="prevBtn" disabled>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="dot-row" id="dotRow"></div>
+  <button class="nav-btn" id="nextBtn">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</nav>
+
+<script>
+  // ── Stars ──
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  function initStars(n = 220) {
+    stars = Array.from({length: n}, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(),
+      da: (Math.random() - 0.5) * 0.005
+    }));
+  }
+  function drawStars() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.a = Math.max(0.05, Math.min(1, s.a + s.da));
+      if (s.a <= 0.05 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  window.addEventListener('resize', () => { resize(); initStars(); });
+  resize(); initStars(); drawStars();
+
+  // ── Slides ──
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total  = slides.length;
+  let current  = 0;
+
+  const prevBtn   = document.getElementById('prevBtn');
+  const nextBtn   = document.getElementById('nextBtn');
+  const slideNum  = document.getElementById('slideNum');
+  const progress  = document.getElementById('progress');
+  const dotRow    = document.getElementById('dotRow');
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotRow.appendChild(d);
+  });
+
+  function updateUI() {
+    slideNum.textContent = `${current + 1} / ${total}`;
+    progress.style.width = `${((current + 1) / total) * 100}%`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  function goTo(idx) {
+    if (idx === current) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => slides[current - (idx > current ? 0 : 0)].classList.remove('exit'), 450);
+
+    const old = current;
+    current = idx;
+    slides[old].classList.remove('active');
+    setTimeout(() => slides[old].classList.remove('exit'), 450);
+    slides[current].classList.add('active');
+    updateUI();
+  }
+
+  function next() { if (current < total - 1) goTo(current + 1); }
+  function prev() { if (current > 0)         goTo(current - 1); }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+  });
+
+  // Touch swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  }, {passive:true});
+
+  updateUI();
+</script>
+</body>
+</html>

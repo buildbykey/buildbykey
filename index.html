@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BuildByKey — strony internetowe na zamówienie, landing page i sklepy internetowe. Tomasz Klucz. Strony, które sprzedają.">
+  <title>BuildByKey — Strony, które sprzedają</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ===== DESIGN SYSTEM ===== */
+    /*
+      Paleta kolorów BuildByKey — do użycia przy tworzeniu logo:
+      --bg:            #09090b   (tło główne — niemal czarne)
+      --surface:       #111113   (powierzchnie podwyższone)
+      --surface-2:     #18181b   (karty, inputy)
+      --text:          #fafaf9   (tekst główny — ciepła biel)
+      --text-muted:    #71717a   (tekst drugorzędny — szary)
+      --accent:        #c8a459   (złoto — JEDYNY kolor akcentu)
+      --border:        rgba(255,255,255,0.07)  (delikatna linia)
+    */
+    :root {
+      --bg:            #09090b;
+      --surface:       #111113;
+      --surface-2:     #18181b;
+      --border:        rgba(255, 255, 255, 0.07);
+      --border-hover:  rgba(255, 255, 255, 0.14);
+      --text:          #fafaf9;
+      --text-muted:    #71717a;
+      --text-dim:      #3f3f46;
+      --accent:        #c8a459;
+      --accent-dim:    rgba(200, 164, 89, 0.10);
+      --accent-border: rgba(200, 164, 89, 0.30);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .accent { color: var(--accent); }
+
+    /* ===== LANG TOGGLE ===== */
+    .lang-toggle {
+      position: fixed;
+      top: 22px;
+      left: 32px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: rgba(9, 9, 11, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px;
+      overflow: hidden;
+    }
+
+    /* On small screens hide the floating toggle — it lives inside the hamburger menu instead */
+    @media (max-width: 640px) {
+      .lang-toggle { display: none; }
+    }
+
+    /* Lang toggle inside mobile dropdown */
+    .nav-mobile-lang {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px 6px;
+      margin-top: 4px;
+      border-top: 1px solid var(--border);
+    }
+    .nav-mobile-lang .lang-btn {
+      flex: 1;
+      justify-content: center;
+      min-height: 40px;
+    }
+
+    .lang-btn {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #09090b;
+    }
+
+    /* ===== NAVBAR ===== */
+    .nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: rgba(9, 9, 11, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px 6px 6px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      width: max-content;
+      transition: box-shadow 0.3s;
+    }
+
+    /* ===== HAMBURGER MENU ===== */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      min-height: 44px;
+      min-width: 44px;
+      align-items: center;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 18px;
+      height: 1.5px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      transition: transform 0.25s, opacity 0.25s;
+      transform-origin: center;
+    }
+    /* Open state */
+    .nav.menu-open .nav-hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav.menu-open .nav-hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav.menu-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile dropdown menu */
+    .nav-mobile-menu {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99;
+      background: rgba(9, 9, 11, 0.98);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 8px;
+      width: calc(100vw - 40px);
+      max-width: 320px;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nav.menu-open ~ .nav-mobile-menu { display: flex; }
+    .nav-mobile-menu a {
+      font-size: 15px;
+      color: var(--text-muted);
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: block;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-mobile-menu a:hover { background: var(--surface); color: var(--text); }
+    .nav-mobile-menu .nav-mobile-cta {
+      margin-top: 6px;
+      background: var(--accent);
+      color: #09090b;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 10px;
+      justify-content: center;
+    }
+    .nav-mobile-menu .nav-mobile-cta:hover { opacity: 0.9; background: var(--accent); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .nav-logo .logo-build { color: var(--accent); }
+    .nav-logo .logo-by    { color: var(--accent); font-weight: 600; opacity: 0.7; }
+    .nav-logo .logo-key   { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 22px;
+      background: var(--accent);
+      color: #09090b;
+      border-radius: 100px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.9; transform: scale(0.97); }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100dvh;
+      padding-top: 80px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hero video background */
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
+      transition: opacity 1.5s ease;
+    }
+    .hero-video-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 9, 11, 0.58);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero > *:not(.hero-video):not(.hero-video-overlay) {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      padding: 0 32px;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 40px;
+      padding: 8px 20px;
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      background: var(--accent-dim);
+    }
+
+    .hero-heading {
+      font-size: clamp(38px, 7vw, 96px);
+      font-weight: 800;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      margin-bottom: 12px;
+      max-width: 900px;
+    }
+
+    .hero-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin: 28px auto 32px;
+      border-radius: 2px;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: rgba(250, 250, 249, 0.65);
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 52px;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 80px;
+    }
+
+    .hero-stats-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      overflow: hidden;
+      background: rgba(9,9,11,0.5);
+    }
+    .hero-stat-pill {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 10px 24px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+    .hero-stat-pill:last-child { border-right: none; }
+    .hero-stat-pill strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Mobile: 2×2 grid pill layout */
+    @media (max-width: 640px) {
+      .hero-stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-radius: 14px;
+        width: 100%;
+      }
+      .hero-stat-pill {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        text-align: center;
+        padding: 12px 10px;
+        white-space: normal;
+      }
+      .hero-stat-pill:nth-child(1),
+      .hero-stat-pill:nth-child(2) {
+        border-right: none;
+      }
+      .hero-stat-pill:nth-child(odd) {
+        border-right: 1px solid rgba(255,255,255,0.08);
+      }
+      .hero-stat-pill:nth-child(3),
+      .hero-stat-pill:nth-child(4) {
+        border-bottom: none;
+      }
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #09090b;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+
+    .scroll-hint {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 32px;
+      height: 1px;
+      background: var(--text-dim);
+      animation: pulse-line 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse-line {
+      0%, 100% { width: 16px; opacity: 0.3; }
+      50%       { width: 32px; opacity: 0.7; }
+    }
+
+    /* Dead CSS removed: .hero-right, .hero-stats, .stat, .stat-number, .stat-label,
+       .browser-mockup, .browser-bar, .dot, .url-bar, .url-text, .browser-content,
+       .preview-bar, .preview-btn-mock, .preview-grid-mock, .preview-card-mock,
+       @keyframes flicker — no matching HTML elements exist. */
+
+    /* ===== SHARED SECTION ===== */
+    section { padding: 100px 0; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .section-label.center { justify-content: center; }
+    .section-label.center::before { display: none; }
+
+    .section-heading {
+      font-size: clamp(34px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 500px;
+    }
+
+    /* ===== SERVICES ===== */
+    .services-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 72px;
+    }
+
+    .service-item {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      align-items: start;
+      gap: 24px;
+      padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: default;
+    }
+    .service-item:first-child { border-top: 1px solid var(--border); }
+
+    .service-num {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      padding-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .service-name {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+    .service-item:hover .service-name { color: var(--accent); }
+    .service-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 500px;
+    }
+    .service-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-muted);
+    }
+    .service-arrow {
+      font-size: 18px;
+      color: var(--text-dim);
+      padding-top: 4px;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .service-item:hover .service-arrow { color: var(--accent); transform: translate(3px, -3px); }
+
+    /* ===== PROCESS ===== */
+    .process {
+      background: var(--surface);
+    }
+    .process-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+    .process-header .section-sub { margin: 0 auto; text-align: center; }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--border);
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .process-step { background: var(--surface); padding: 40px 30px; }
+    .step-num {
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--text-dim);
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: -0.04em;
+    }
+    .step-name {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .step-desc { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ===== PRICING ===== */
+    .pricing-header { text-align: center; margin-bottom: 60px; }
+    .pricing-header .section-sub { margin: 0 auto; text-align: center; }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .pricing-card { background: var(--bg); padding: 40px 34px; }
+    .pricing-card.featured { background: var(--surface); }
+
+    .pricing-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #09090b;
+      background: var(--accent);
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .pricing-tier {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .pricing-price {
+      font-size: 46px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .pricing-billing { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+    .pricing-annual {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pricing-annual strong { color: var(--accent); font-weight: 600; }
+    .pricing-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .check {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M12 5.5L6.5 11 4 8.5' stroke='%23c8a459' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+    }
+    .pricing-cta {
+      display: block;
+      text-align: center;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .pricing-cta:hover { border-color: var(--border-hover); color: var(--text); }
+    .pricing-card.featured .pricing-cta {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #09090b;
+    }
+    .pricing-card.featured .pricing-cta:hover { opacity: 0.9; }
+    .pricing-note { text-align: center; margin-top: 28px; font-size: 14px; color: var(--text-muted); }
+    .pricing-note a { color: var(--accent); }
+    .pricing-note a:hover { text-decoration: underline; }
+
+    /* ===== PORTFOLIO ===== */
+    .portfolio { padding: 100px 0; }
+    .portfolio .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .portfolio .section-label::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: var(--accent);
+      display: block;
+    }
+    .portfolio h2 {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .portfolio-desc {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 65ch;
+      margin-bottom: 56px;
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .portfolio-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+      text-decoration: none;
+    }
+    .portfolio-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+    .portfolio-visual {
+      height: 200px;
+      border-radius: 12px 12px 0 0;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Card 1 — Kosmos: deep space */
+    .portfolio-visual--stars {
+      background: #05050a;
+      background-image:
+        radial-gradient(ellipse at 75% 40%, rgba(59,120,247,0.22) 0%, transparent 50%),
+        radial-gradient(ellipse at 15% 75%, rgba(123,108,212,0.18) 0%, transparent 45%);
+    }
+    .portfolio-visual--stars::before {
+      content: '';
+      position: absolute;
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: rgba(220,230,255,0.95);
+      top: 12px; left: 18px;
+      box-shadow:
+        42px 6px 0 0 rgba(200,215,255,0.85),
+        88px 22px 0 1px rgba(255,255,255,0.7),
+        148px 9px 0 0 rgba(220,230,255,0.9),
+        205px 30px 0 0 rgba(180,200,255,0.65),
+        258px 14px 0 1px rgba(200,215,255,0.6),
+        28px 52px 0 0 rgba(220,230,255,0.75),
+        118px 68px 0 1px rgba(180,200,255,0.55),
+        178px 55px 0 0 rgba(200,215,255,0.8),
+        238px 72px 0 0 rgba(155,180,255,0.5),
+        72px 98px 0 1px rgba(200,215,255,0.45),
+        158px 108px 0 0 rgba(180,200,255,0.65),
+        278px 88px 0 0 rgba(220,230,255,0.7),
+        48px 138px 0 0 rgba(200,215,255,0.5),
+        198px 152px 0 1px rgba(155,180,255,0.4),
+        318px 42px 0 0 rgba(220,230,255,0.6),
+        340px 115px 0 0 rgba(180,200,255,0.55),
+        105px 130px 0 0 rgba(220,230,255,0.45),
+        290px 148px 0 1px rgba(200,215,255,0.5);
+    }
+    .portfolio-visual--stars::after {
+      content: '';
+      position: absolute;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 32%, #c8d8ff 0%, #3b78f7 38%, #1a3a8a 70%, #050510 100%);
+      box-shadow: 0 0 28px 10px rgba(59,120,247,0.4), 0 0 64px 24px rgba(59,120,247,0.14);
+      top: 50%; right: 52px;
+      transform: translateY(-50%);
+    }
+    /* Card 2 — Presentation: laptop SVG */
+    .portfolio-visual--circuit {
+      background: #09090b;
+    }
+    /* Card 3 — Elizee: real photo */
+    .portfolio-visual--beauty {
+      background-image: url('portfolio/elizee/images/hero-main.jpg');
+      background-size: cover;
+      background-position: center top;
+    }
+    .portfolio-visual--beauty::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(5,5,10,0.1) 0%, rgba(5,5,10,0.55) 100%);
+    }
+    .portfolio-content {
+      padding: 28px 32px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .portfolio-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .portfolio-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 4px 12px;
+      border-radius: 100px;
+      border: 1px solid var(--accent-border);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .portfolio-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .portfolio-card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.6;
+      flex: 1;
+    }
+    .portfolio-arrow {
+      color: var(--accent);
+      font-size: 18px;
+      text-align: right;
+      margin-top: 16px;
+      transition: transform 0.2s ease;
+    }
+    .portfolio-card:hover .portfolio-arrow {
+      transform: translateX(4px);
+    }
+    .portfolio-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 64px;
+    }
+    @media (max-width: 900px) {
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .portfolio { padding: 70px 0; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-header { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    /* ===== ABOUT ===== */
+    .about-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 80px; align-items: center; }
+    .portrait-frame {
+      aspect-ratio: 3/4;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .portrait-logo { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .portrait-frame::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 45%;
+      background: linear-gradient(to top, var(--surface), transparent);
+      pointer-events: none;
+    }
+    .portrait-tags {
+      position: absolute;
+      bottom: 18px; left: 18px; right: 18px;
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      z-index: 1;
+    }
+    .portrait-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      background: rgba(9, 9, 11, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-muted);
+      backdrop-filter: blur(12px);
+    }
+    .about-label { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .about-heading { font-size: clamp(30px, 3.5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 24px; }
+    .about-bio { font-size: 16px; color: var(--text-muted); line-height: 1.8; margin-bottom: 16px; }
+    .about-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-top: 28px;
+    }
+    .bullet-row { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted); }
+    .bullet-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    /* ===== TEAM ===== */
+    .team { background: var(--bg); }
+    .team-header { margin-bottom: 60px; }
+    .team-heading {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-top: 16px;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 60px;
+      align-items: start;
+      margin-bottom: 56px;
+    }
+    .team-divider {
+      background: var(--border);
+      align-self: stretch;
+    }
+    .team-card { padding: 0 20px; }
+    .team-role {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .team-name {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .team-bio {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .team-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .team-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 5px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .team-footer {
+      font-size: 17px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+      max-width: 65ch;
+    }
+    @media (max-width: 640px) {
+      .team-grid { grid-template-columns: 1fr; gap: 40px; }
+      .team-divider { display: none; }
+      .team-card { padding: 0; }
+    }
+
+    /* ===== CONTACT ===== */
+    .contact { background: var(--surface); position: relative; overflow: hidden; }
+
+    /* Contact video background */
+    .contact-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+    .contact-video-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(9,9,11,0.80) 30%, rgba(9,9,11,0.40) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .contact .container {
+      position: relative;
+      z-index: 2;
+    }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 80px; align-items: start; }
+    .contact-heading { font-size: clamp(38px, 4.5vw, 58px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 22px; }
+    .contact-sub { font-size: 16px; color: var(--text-muted); line-height: 1.75; margin-bottom: 32px; }
+    .contact-links { display: flex; flex-direction: column; gap: 12px; }
+    .contact-email { display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; color: var(--accent); transition: opacity 0.2s; text-decoration: none; }
+    .contact-email:hover { opacity: 0.75; }
+    .contact-email svg { flex-shrink: 0; }
+    .contact-meta { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+    .contact-meta-item { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .contact-meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+    /* Form */
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .form-input, .form-textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent-border); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-dim); }
+    .form-textarea { resize: vertical; min-height: 108px; }
+    .form-submit {
+      align-self: flex-start;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #09090b;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .form-submit:hover  { opacity: 0.9; transform: translateY(-1px); }
+    .form-submit:active { transform: scale(0.98); }
+    .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .form-success {
+      display: none;
+      font-size: 14px;
+      color: var(--accent);
+      padding: 14px 16px;
+      border: 1px solid var(--accent-border);
+      border-radius: 8px;
+      background: var(--accent-dim);
+    }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 36px 0; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .footer-brand { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+    .footer-brand span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-size: 13px; color: var(--text-muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 13px; color: var(--text-dim); }
+
+    /* ===== SCROLL ANIMATIONS ===== */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up:nth-child(2) { transition-delay: 0.08s; }
+    .fade-up:nth-child(3) { transition-delay: 0.16s; }
+    .fade-up:nth-child(4) { transition-delay: 0.24s; }
+
+    /* Disable animations for users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .scroll-line { animation: none; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .hero { padding-top: 100px; }
+      .hero-left { padding: 48px 0; }
+      .scroll-hint { display: none; }
+      .services-header { grid-template-columns: 1fr; gap: 28px; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .about-minimal { grid-template-columns: 1fr; gap: 32px; }
+      .about-stats { grid-template-columns: 1fr; gap: 24px; }
+      .about-stat-item { border-right: none; margin-right: 0; padding-right: 0; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+      .about-stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+      .contact-inner { grid-template-columns: 1fr; }
+      .lang-toggle { top: 16px; left: 16px; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      section { padding: 68px 0; }
+
+      /* Navbar: logo left, hamburger right — pill shrinks to fit */
+      .nav {
+        gap: 0;
+        padding: 8px 8px 8px 18px;
+        width: calc(100vw - 40px);
+        max-width: 360px;
+        justify-content: space-between;
+        border-radius: 100px;
+      }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+
+      /* Hero */
+      .hero-heading { font-size: clamp(34px, 9vw, 42px); }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+
+      /* Services */
+      .service-item { grid-template-columns: 40px 1fr; }
+      .service-arrow { display: none; }
+
+      /* Process */
+      .process-grid { grid-template-columns: 1fr; border-radius: 12px; }
+
+      /* Pricing — reduce padding on small screens */
+      .pricing-grid { border-radius: 12px; }
+      .pricing-card { padding: 28px 22px; }
+
+      /* About — minimal layout stacks on mobile */
+      .about-minimal { padding-bottom: 40px; margin-bottom: 40px; }
+
+      /* Contact form — 16px prevents iOS auto-zoom on input focus */
+      .form-input, .form-textarea { font-size: 16px; }
+
+      /* Footer — ensure clean wrap */
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
+
+      /* Touch targets — min 44px for all interactive elements */
+      .nav-links a,
+      .footer-links a,
+      .pricing-cta,
+      .lang-btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      .btn-primary,
+      .btn-ghost,
+      .nav-cta,
+      .form-submit,
+      .contact-email {
+        min-height: 44px;
+      }
+    }
+  </style>
+</head>
+
+<body id="top">
+
+  <!-- ===== LANGUAGE TOGGLE ===== -->
+  <div class="lang-toggle" role="group" aria-label="Wybór języka">
+    <button class="lang-btn active" id="btn-pl" onclick="setLang('pl')" aria-pressed="true">PL</button>
+    <button class="lang-btn"        id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
+  </div>
+
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="nav" id="nav">
+    <a href="#top" class="nav-logo" aria-label="BuildByKey — wróć na górę">
+      <span class="logo-build">Build</span><span class="logo-by">By</span><span class="logo-key">Key</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services"  data-pl="Oferta"    data-en="Services">Oferta</a></li>
+      <li><a href="#process"   data-pl="Jak to działa" data-en="Process">Jak to działa</a></li>
+      <li><a href="#pricing"   data-pl="Cennik"    data-en="Pricing">Cennik</a></li>
+      <li><a href="#portfolio" data-pl="Portfolio" data-en="Portfolio">Portfolio</a></li>
+      <li><a href="#about"     data-pl="O mnie"    data-en="About">O mnie</a></li>
+      <li><a href="#team"      data-pl="Zespół"    data-en="Team">Zespół</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta" data-pl="Napisz do mnie" data-en="Get in touch">Napisz do mnie</a>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Otwórz menu" aria-expanded="false" aria-controls="nav-mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile dropdown nav -->
+  <div class="nav-mobile-menu" id="nav-mobile-menu" role="navigation" aria-label="Menu mobilne">
+    <a href="#services"  data-pl="Oferta"        data-en="Services">Oferta</a>
+    <a href="#process"   data-pl="Jak to działa" data-en="Process">Jak to działa</a>
+    <a href="#pricing"   data-pl="Cennik"         data-en="Pricing">Cennik</a>
+    <a href="#portfolio" data-pl="Portfolio"      data-en="Portfolio">Portfolio</a>
+    <a href="#about"     data-pl="O mnie"         data-en="About">O mnie</a>
+    <a href="#team"      data-pl="Zespół"         data-en="Team">Zespół</a>
+    <a href="#contact"   data-pl="Napisz do mnie" data-en="Get in touch" class="nav-mobile-cta">Napisz do mnie</a>
+    <div class="nav-mobile-lang" role="group" aria-label="Wybór języka">
+      <button class="lang-btn active" id="btn-pl-m" onclick="setLang('pl')" aria-pressed="true">PL</button>
+      <button class="lang-btn"        id="btn-en-m" onclick="setLang('en')" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+
+  <main>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" aria-label="Hero">
+    <!-- Video background — dual crossfade loop -->
+    <video class="hero-video" id="hero-vid-a" autoplay muted playsinline preload="auto" aria-hidden="true">
+      <source src="assets/images/aurora-hero.mp4" type="video/mp4">
+    </video>
+    <video class="hero-video" id="hero-vid-b" muted playsinline preload="auto" style="opacity:0;" aria-hidden="true">
+      <source src="assets/images/aurora-hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-video-overlay"></div>
+
+    <div class="hero-left container">
+
+      <span class="hero-tag" data-pl="Agencja sprzedaży stron internetowych" data-en="Website Sales Agency">Agencja sprzedaży stron internetowych</span>
+
+      <h1 class="hero-heading">
+        <span data-pl="Nie budujemy stron.<br>Budujemy <span class='accent'>przewagę.</span>" data-en="We don't build websites.<br>We build <span class='accent'>an advantage.</span>">Nie budujemy stron.<br>Budujemy <span class="accent">przewagę.</span></span>
+      </h1>
+
+      <div class="hero-divider"></div>
+
+      <p class="hero-sub" data-pl="Projektujemy strony, które przyciągają uwagę i napędzają Twój biznes." data-en="We design websites that capture attention and drive your business forward.">
+        Projektujemy strony, które przyciągają uwagę i napędzają Twój biznes.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary" data-pl="Zacznijmy projekt →" data-en="Start a project →">Zacznijmy projekt &rarr;</a>
+        <a href="#pricing" class="btn-ghost"   data-pl="Zobacz cennik"        data-en="View pricing">Zobacz cennik</a>
+      </div>
+
+      <div class="hero-stats-row">
+        <div class="hero-stat-pill" data-pl="<strong>100%</strong>&nbsp;własny kod" data-en="<strong>100%</strong>&nbsp;custom code"><strong>100%</strong>&nbsp;własny kod</div>
+        <div class="hero-stat-pill" data-pl="<strong>1–3 tygodnie</strong>&nbsp;realizacja" data-en="<strong>1–3 weeks</strong>&nbsp;delivery"><strong>1–3 tygodnie</strong>&nbsp;realizacja</div>
+        <div class="hero-stat-pill" data-pl="<strong>SEO</strong>&nbsp;od pierwszego dnia" data-en="<strong>SEO</strong>&nbsp;from day one"><strong>SEO</strong>&nbsp;od pierwszego dnia</div>
+        <div class="hero-stat-pill" data-pl="<strong>24/7</strong>&nbsp;strona działa za Ciebie" data-en="<strong>24/7</strong>&nbsp;your site works for you"><strong>24/7</strong>&nbsp;strona działa za Ciebie</div>
+      </div>
+
+      <div class="scroll-hint" style="margin-top: 48px; justify-content: center;">
+        <span class="scroll-line"></span>
+        <span data-pl="Przewiń" data-en="Scroll">Przewiń</span>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===== SERVICES ===== -->
+  <section class="services" id="services" aria-label="Oferta">
+    <div class="container">
+
+      <div class="services-header">
+        <div>
+          <span class="section-label" data-pl="Co buduję" data-en="What I Build">Co buduję</span>
+          <h2 class="section-heading" data-pl="Strona, która<br>rozwinie Twój biznes." data-en="A website that<br>grows your business.">Strona, która<br>rozwinie Twój biznes.</h2>
+        </div>
+        <p class="section-sub" data-pl="Buduję strony internetowe i tworzę materiały sprzedażowe dla twórców, freelancerów i małych firm — szybko, estetycznie, skutecznie." data-en="I build websites and create sales materials for creators, freelancers, and small businesses — fast, aesthetic, and effective.">
+          Buduję strony internetowe i tworzę materiały sprzedażowe dla twórców, freelancerów i małych firm — szybko, estetycznie, skutecznie.
+        </p>
+      </div>
+
+      <div>
+
+        <div class="service-item fade-up">
+          <span class="service-num">01</span>
+          <div>
+            <h3 class="service-name" data-pl="Strona wizytówka" data-en="Business Card Site">Strona wizytówka</h3>
+            <p class="service-desc" data-pl="Twoja marka w internecie — jedna strona, która od razu mówi kim jesteś i co oferujesz. Płynne animacje, grafiki, nowoczesny design. Gotowa w tydzień." data-en="Your brand online — one page that instantly shows who you are and what you offer. Smooth animations, visuals, modern design. Ready in a week.">
+              Twoja marka w internecie — jedna strona, która od razu mówi kim jesteś i co oferujesz. Płynne animacje, grafiki, nowoczesny design. Gotowa w tydzień.
+            </p>
+          </div>
+          <span class="service-arrow">&#8599;</span>
+        </div>
+
+        <div class="service-item fade-up">
+          <span class="service-num">02</span>
+          <div>
+            <h3 class="service-name" data-pl="Strona firmowa" data-en="Business Website">Strona firmowa</h3>
+            <p class="service-desc" data-pl="Kilka podstron, które opowiadają pełną historię Twojej firmy — oferta, portfolio, o mnie, kontakt. Zbudowana na własnym kodzie, nie na WordPressie." data-en="A multi-page site that tells your full story — services, portfolio, about, contact. Built on clean custom code, not WordPress.">
+              Kilka podstron, które opowiadają pełną historię Twojej firmy — oferta, portfolio, o mnie, kontakt. Zbudowana na własnym kodzie, nie na WordPressie.
+            </p>
+          </div>
+          <span class="service-arrow">&#8599;</span>
+        </div>
+
+        <div class="service-item fade-up">
+          <span class="service-num">03</span>
+          <div>
+            <h3 class="service-name" data-pl="Materiały sprzedażowe" data-en="Sales Materials">Materiały sprzedażowe</h3>
+            <p class="service-desc" data-pl="Profesjonalne prezentacje, oferty handlowe i broszury PDF — materiały, które robią wrażenie i pomagają zamknąć sprzedaż." data-en="Professional presentations, sales proposals, and PDF brochures — materials that impress clients and help close deals.">
+              Profesjonalne prezentacje, oferty handlowe i broszury PDF — materiały, które robią wrażenie i pomagają zamknąć sprzedaż.
+            </p>
+          </div>
+          <span class="service-arrow">&#8599;</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== PROCESS ===== -->
+  <section class="process" id="process" aria-label="Jak to działa">
+    <div class="container">
+
+      <div class="process-header">
+        <span class="section-label center" data-pl="Jak to działa" data-en="How It Works">Jak to działa</span>
+        <h2 class="section-heading" data-pl="Od pomysłu do<br>gotowej strony w 4 krokach." data-en="From idea to live<br>site in 4 steps.">Od pomysłu do<br>gotowej strony w 4 krokach.</h2>
+        <p class="section-sub" data-pl="Przejrzysty proces, w którym jesteś na bieżąco przez cały czas." data-en="A clear, transparent process with you in the loop the entire time.">Przejrzysty proces, w którym jesteś na bieżąco przez cały czas.</p>
+      </div>
+
+      <div class="process-grid">
+        <div class="process-step fade-up">
+          <div class="step-num">01</div>
+          <h3 class="step-name" data-pl="Rozmowa wstępna" data-en="Discovery Call">Rozmowa wstępna</h3>
+          <p class="step-desc" data-pl="Rozmawiamy o Twojej firmie, celach i grupie docelowej. Bez technicznego żargonu — po prostu konkretna rozmowa." data-en="We talk about your business, goals, and audience. No jargon — just a real conversation.">Rozmawiamy o Twojej firmie, celach i grupie docelowej. Bez technicznego żargonu — po prostu konkretna rozmowa.</p>
+        </div>
+        <div class="process-step fade-up">
+          <div class="step-num">02</div>
+          <h3 class="step-name" data-pl="Projekt i wycena" data-en="Design &amp; Proposal">Projekt i wycena</h3>
+          <p class="step-desc" data-pl="Otrzymujesz jasną wycenę i pierwsze makiety. Dopracowujemy projekt, zanim napisana zostanie pierwsza linia kodu." data-en="You receive a clear proposal and initial mockups. We iterate until you love it before any code is written.">Otrzymujesz jasną wycenę i pierwsze makiety. Dopracowujemy projekt, zanim napisana zostanie pierwsza linia kodu.</p>
+        </div>
+        <div class="process-step fade-up">
+          <div class="step-num">03</div>
+          <h3 class="step-name" data-pl="Kodowanie i testy" data-en="Build &amp; Test">Kodowanie i testy</h3>
+          <p class="step-desc" data-pl="Strona jest budowana, testowana na wszystkich urządzeniach i przeglądarkach oraz optymalizowana pod szybkość i SEO. Informuję Cię o postępach." data-en="The site is built, tested on all devices, and optimized for speed and SEO. You get progress updates throughout.">Strona jest budowana, testowana na wszystkich urządzeniach i przeglądarkach oraz optymalizowana pod szybkość i SEO. Informuję Cię o postępach.</p>
+        </div>
+        <div class="process-step fade-up">
+          <div class="step-num">04</div>
+          <h3 class="step-name" data-pl="Publikacja i wsparcie" data-en="Launch &amp; Support">Publikacja i wsparcie</h3>
+          <p class="step-desc" data-pl="Zajmuję się wdrożeniem i pozostaję dostępny na poprawki i wsparcie. Twoja strona pracuje i rośnie długo po oddaniu projektu." data-en="I handle the launch and stay available for edits and support. Your site keeps working long after delivery.">Zajmuję się wdrożeniem i pozostaję dostępny na poprawki i wsparcie. Twoja strona pracuje i rośnie długo po oddaniu projektu.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===== PRICING ===== -->
+  <section id="pricing" aria-label="Cennik">
+    <div class="container">
+
+      <div class="pricing-header">
+        <span class="section-label center" data-pl="Przejrzyste ceny" data-en="Transparent Pricing">Przejrzyste ceny</span>
+        <h2 class="section-heading" data-pl="Proste, uczciwe ceny." data-en="Simple, honest pricing.">Proste, uczciwe ceny.</h2>
+        <p class="section-sub" data-pl="Żadnych ukrytych kosztów. Żadnych niespodzianek. Wybierz pakiet pasujący do Twojego biznesu lub napisz po indywidualną wycenę." data-en="No hidden fees. No surprises. Pick the plan that fits — or reach out for a custom quote.">Żadnych ukrytych kosztów. Żadnych niespodzianek. Wybierz pakiet pasujący do Twojego biznesu lub napisz po indywidualną wycenę.</p>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- Starter -->
+        <div class="pricing-card featured fade-up">
+          <span class="pricing-badge" data-pl="Najpopularniejszy" data-en="Most Popular">Najpopularniejszy</span>
+          <div class="pricing-tier" data-pl="Start" data-en="Starter">Start</div>
+          <div class="pricing-price accent" id="price-1">1&nbsp;500&nbsp;z&#x142;</div>
+          <div class="pricing-billing" data-pl="jednorazowa płatność" data-en="one-time payment">jednorazowa płatność</div>
+          <div class="pricing-annual"><strong data-pl="+ 200 zł / rok" data-en="+ €50 / yr">+ 200 zł / rok</strong><span data-pl="hosting i domena" data-en="hosting &amp; domain">hosting i domena</span></div>
+          <p class="pricing-desc" data-pl="Strona wizytówka, która reprezentuje Cię w sieci — estetyczna, szybka, gotowa w tydzień." data-en="A business card site that represents you online — aesthetic, fast, ready in a week.">
+            Strona wizytówka, która reprezentuje Cię w sieci — estetyczna, szybka, gotowa w tydzień.
+          </p>
+          <ul class="pricing-features">
+            <li><span class="check"></span><span data-pl="1 strona wizytówka" data-en="1-page business card site">1 strona wizytówka</span></li>
+            <li><span class="check"></span><span data-pl="W pełni responsywna" data-en="Fully mobile responsive">W pełni responsywna</span></li>
+            <li><span class="check"></span><span data-pl="Formularz kontaktowy" data-en="Contact form integration">Formularz kontaktowy</span></li>
+            <li><span class="check"></span><span data-pl="Podstawowe SEO" data-en="Basic SEO setup">Podstawowe SEO</span></li>
+            <li><span class="check"></span><span data-pl="Google Analytics" data-en="Google Analytics">Google Analytics</span></li>
+            <li><span class="check"></span><span data-pl="7 dni na poprawki" data-en="7-day revision window">7 dni na poprawki</span></li>
+          </ul>
+          <a href="#contact" class="pricing-cta" data-pl="Zacznij" data-en="Get started">Zacznij</a>
+        </div>
+
+        <!-- Growth -->
+        <div class="pricing-card fade-up">
+          <div class="pricing-tier" data-pl="Wzrost" data-en="Growth">Wzrost</div>
+          <div class="pricing-price" id="price-2">3&nbsp;000&nbsp;z&#x142;</div>
+          <div class="pricing-billing" data-pl="jednorazowa płatność" data-en="one-time payment">jednorazowa płatność</div>
+          <div class="pricing-annual"><strong data-pl="+ 300 zł / rok" data-en="+ €70 / yr">+ 300 zł / rok</strong><span data-pl="hosting premium i domena" data-en="premium hosting &amp; domain">hosting premium i domena</span></div>
+          <p class="pricing-desc" data-pl="Kompletna strona firmowa — pozycjonuj się, konwertuj i zarządzaj treściami samodzielnie." data-en="A full business website to rank, convert, and manage your content yourself.">
+            Kompletna strona firmowa — pozycjonuj się, konwertuj i zarządzaj treściami samodzielnie.
+          </p>
+          <ul class="pricing-features">
+            <li><span class="check"></span><span data-pl="Do 4 podstron" data-en="Up to 4 custom pages">Do 4 podstron</span></li>
+            <li><span class="check"></span><span data-pl="CMS — edytujesz treści sam" data-en="CMS — edit content yourself">CMS — edytujesz treści sam</span></li>
+            <li><span class="check"></span><span data-pl="Zaawansowane SEO" data-en="Advanced SEO optimization">Zaawansowane SEO</span></li>
+            <li><span class="check"></span><span data-pl="Blog lub portfolio" data-en="Blog or portfolio section">Blog lub portfolio</span></li>
+            <li><span class="check"></span><span data-pl="Integracja e-mail marketingu" data-en="Email marketing integration">Integracja e-mail marketingu</span></li>
+            <li><span class="check"></span><span data-pl="14 dni wsparcia w cenie" data-en="14-day support included">14 dni wsparcia w cenie</span></li>
+          </ul>
+          <a href="#contact" class="pricing-cta" data-pl="Zacznij" data-en="Get started">Zacznij</a>
+        </div>
+
+        <!-- Materials -->
+        <div class="pricing-card fade-up">
+          <div class="pricing-tier" data-pl="Materiały" data-en="Materials">Materiały</div>
+          <div class="pricing-price" id="price-3">od&nbsp;700&nbsp;z&#x142;</div>
+          <div class="pricing-billing" data-pl="jednorazowa płatność" data-en="one-time payment">jednorazowa płatność</div>
+          <div class="pricing-annual"><strong data-pl="wycena zależna od zakresu" data-en="price depends on scope">wycena zależna od zakresu</strong></div>
+          <p class="pricing-desc" data-pl="Profesjonalne materiały, które robią wrażenie — prezentacje, oferty, broszury PDF gotowe do wysłania klientowi." data-en="Professional materials that impress — pitch decks, proposals, and PDF brochures ready to send.">
+            Profesjonalne materiały, które robią wrażenie — prezentacje, oferty, broszury PDF gotowe do wysłania klientowi.
+          </p>
+          <ul class="pricing-features">
+            <li><span class="check"></span><span data-pl="Prezentacja / pitch deck (do 15 slajdów)" data-en="Presentation / pitch deck (up to 15 slides)">Prezentacja / pitch deck (do 15 slajdów)</span></li>
+            <li><span class="check"></span><span data-pl="Oferta handlowa w PDF" data-en="Sales proposal in PDF">Oferta handlowa w PDF</span></li>
+            <li><span class="check"></span><span data-pl="Broszura firmowa" data-en="Company brochure">Broszura firmowa</span></li>
+            <li><span class="check"></span><span data-pl="Spójny z Twoją marką" data-en="Consistent with your brand">Spójny z Twoją marką</span></li>
+            <li><span class="check"></span><span data-pl="Format do edycji (PPT / Canva / PDF)" data-en="Editable format (PPT / Canva / PDF)">Format do edycji (PPT / Canva / PDF)</span></li>
+            <li><span class="check"></span><span data-pl="2 rundy poprawek w cenie" data-en="2 revision rounds included">2 rundy poprawek w cenie</span></li>
+          </ul>
+          <a href="#contact" class="pricing-cta" data-pl="Zapytaj o wycenę" data-en="Get a quote">Zapytaj o wycenę</a>
+        </div>
+
+      </div>
+
+      <p class="pricing-note">
+        <span data-pl="Potrzebujesz czegoś niestandardowego?" data-en="Need something custom?">Potrzebujesz czegoś niestandardowego?</span>
+        <a href="#contact" data-pl="Porozmawiajmy →" data-en="Let's talk →">Porozmawiajmy &rarr;</a>
+      </p>
+
+      <div style="display:flex;justify-content:center;gap:32px;margin-top:32px;padding-top:28px;border-top:1px solid var(--border);flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8a459" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span style="font-size:13px;color:var(--text-muted);" data-pl="50% zaliczki przed startem, 50% po odbiorze" data-en="50% upfront, 50% on delivery">50% zaliczki przed startem, 50% po odbiorze</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8a459" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <span style="font-size:13px;color:var(--text-muted);" data-pl="Realizacja w 1–3 tygodnie" data-en="Delivered in 1–3 weeks">Realizacja w 1–3 tygodnie</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===== PORTFOLIO ===== -->
+  <section class="portfolio" id="portfolio" aria-label="Portfolio">
+    <div class="container">
+
+      <div class="portfolio-header fade-up">
+        <div>
+          <span class="section-label" data-pl="Portfolio" data-en="Portfolio">Portfolio</span>
+          <h2 class="section-heading" data-pl="Wybrane<br>realizacje" data-en="Selected<br>work">Wybrane<br>realizacje</h2>
+        </div>
+        <p class="section-sub" data-pl="Każdy projekt to osobna historia — inna branża, inny cel, ten sam standard wykonania." data-en="Every project is a different story — different industry, different goal, the same standard of execution.">
+          Każdy projekt to osobna historia — inna branża, inny cel, ten sam standard wykonania.
+        </p>
+      </div>
+
+      <div class="portfolio-grid fade-up">
+
+        <!-- Card 1: Planetarium -->
+        <a href="portfolio/kosmos.html" class="portfolio-card" aria-label="Kosmiczne Planetarium — Zobacz projekt">
+          <div class="portfolio-visual portfolio-visual--stars" aria-hidden="true"></div>
+          <div class="portfolio-content">
+
+            <h3 class="portfolio-title">Kosmiczne Planetarium</h3>
+            <p class="portfolio-card-desc">Strona dla centrum astronomicznego — animowane gwiazdozbiory, rezerwacja biletów online.</p>
+            <span class="portfolio-arrow">Zobacz projekt &rarr;</span>
+          </div>
+        </a>
+
+        <!-- Card 2: Computer specs -->
+        <a href="portfolio/presentation.html" class="portfolio-card" aria-label="TechSpec — Sprzęt Komputerowy — Zobacz projekt">
+          <div class="portfolio-visual portfolio-visual--circuit" aria-hidden="true">
+            <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;">
+              <!-- glow -->
+              <ellipse cx="180" cy="130" rx="110" ry="40" fill="rgba(200,164,89,0.06)"/>
+              <!-- screen body -->
+              <rect x="80" y="18" width="200" height="128" rx="6" fill="#0d0d10" stroke="rgba(200,164,89,0.5)" stroke-width="1.5"/>
+              <!-- screen bezel inner -->
+              <rect x="88" y="26" width="184" height="112" rx="3" fill="#111113"/>
+              <!-- screen content lines -->
+              <rect x="100" y="38" width="80" height="6" rx="2" fill="rgba(200,164,89,0.7)"/>
+              <rect x="100" y="52" width="120" height="3" rx="1.5" fill="rgba(255,255,255,0.12)"/>
+              <rect x="100" y="60" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.09)"/>
+              <rect x="100" y="74" width="160" height="2" rx="1" fill="rgba(255,255,255,0.07)"/>
+              <rect x="100" y="82" width="140" height="2" rx="1" fill="rgba(255,255,255,0.07)"/>
+              <rect x="100" y="90" width="155" height="2" rx="1" fill="rgba(255,255,255,0.07)"/>
+              <rect x="100" y="104" width="50" height="16" rx="3" fill="rgba(200,164,89,0.2)" stroke="rgba(200,164,89,0.4)" stroke-width="1"/>
+              <rect x="158" y="104" width="50" height="16" rx="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+              <!-- hinge -->
+              <rect x="80" y="144" width="200" height="3" rx="1" fill="rgba(200,164,89,0.25)"/>
+              <!-- base -->
+              <rect x="60" y="147" width="240" height="12" rx="3" fill="#111113" stroke="rgba(200,164,89,0.3)" stroke-width="1.5"/>
+              <!-- keyboard dots -->
+              <rect x="74" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="84" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="94" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="104" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="114" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="124" y="151" width="40" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="168" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="178" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <rect x="188" y="151" width="6" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
+              <!-- trackpad -->
+              <rect x="155" y="157" width="50" height="0" rx="1" fill="rgba(255,255,255,0.04)"/>
+            </svg>
+          </div>
+          <div class="portfolio-content">
+
+            <h3 class="portfolio-title">TechSpec — Sprzęt Komputerowy</h3>
+            <p class="portfolio-card-desc">Prezentacja specyfikacji laptopów i komputerów — porównanie konfiguracji, video hero.</p>
+            <span class="portfolio-arrow">Zobacz projekt &rarr;</span>
+          </div>
+        </a>
+
+        <!-- Card 3: Elizee -->
+        <a href="portfolio/elizee/index.html" class="portfolio-card" aria-label="Elizée Wizażystka — Zobacz projekt">
+          <div class="portfolio-visual portfolio-visual--beauty" aria-hidden="true"></div>
+          <div class="portfolio-content">
+            <h3 class="portfolio-title">Elizée — Wizażystka</h3>
+            <p class="portfolio-card-desc">Strona wizytówkowa dla profesjonalnej wizażystki — cennik usług, FAQ, formularz rezerwacji.</p>
+            <span class="portfolio-arrow">Zobacz projekt &rarr;</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== ABOUT ===== -->
+  <section class="about" id="about" aria-label="O mnie">
+    <div class="container">
+
+      <div class="about-grid">
+
+        <div>
+          <div class="portrait-frame">
+            <img src="assets/images/BuildByKey.jpeg" alt="BuildByKey logo" class="portrait-logo" width="420" height="420" loading="lazy">
+          </div>
+        </div>
+
+        <div>
+          <div class="about-label" data-pl="BuildByKey — O nas" data-en="BuildByKey — About us">BuildByKey &mdash; O nas</div>
+          <h2 class="about-heading" data-pl="Tworzymy strony,<br>które działają." data-en="We build websites<br>that work.">Tworzymy strony,<br>które działają.</h2>
+          <p class="about-bio" data-pl="Projektujemy i wdrażamy strony internetowe, które łączą estetykę z funkcjonalnością. Każdy projekt traktujemy indywidualnie — bez szablonów, bez kompromisów." data-en="We design and build websites that combine aesthetics with functionality. Every project is treated individually — no templates, no compromises.">
+            Projektujemy i wdrażamy strony internetowe, które łączą estetykę z funkcjonalnością. Każdy projekt traktujemy indywidualnie — bez szablonów, bez kompromisów.
+          </p>
+          <p class="about-bio" data-pl="Pełna dokumentacja, faktura VAT, terminowa realizacja. Od pierwszego briefu po wdrożenie — jeden kontakt, zero chaosu." data-en="Full documentation, VAT invoice, on-time delivery. From first brief to launch — one point of contact, zero chaos.">
+            Pełna dokumentacja, faktura VAT, terminowa realizacja. Od pierwszego briefu po wdrożenie — jeden kontakt, zero chaosu.
+          </p>
+          <div class="about-bullets">
+            <div class="bullet-row">
+              <div class="bullet-dot"></div>
+              <span data-pl="Bezpośredni kontakt — zawsze ze mną, zawsze na bieżąco" data-en="Direct contact — always with me, always up to date">Bezpośredni kontakt — zawsze ze mną, zawsze na bieżąco</span>
+            </div>
+            <div class="bullet-row">
+              <div class="bullet-dot"></div>
+              <span data-pl="Szybka realizacja — projekty gotowe w 1–3 tygodnie" data-en="Fast delivery — projects ready in 1–3 weeks">Szybka realizacja — projekty gotowe w 1–3 tygodnie</span>
+            </div>
+            <div class="bullet-row">
+              <div class="bullet-dot"></div>
+              <span data-pl="Pełne zaangażowanie — od pierwszej rozmowy po wdrożenie" data-en="Full commitment — from first call to launch">Pełne zaangażowanie — od pierwszej rozmowy po wdrożenie</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===== TEAM ===== -->
+  <section class="team" id="team" aria-label="Zespół">
+    <div class="container">
+      <div class="team-header">
+        <span class="section-label" data-pl="Kto za tym stoi" data-en="Who's behind this">Kto za tym stoi</span>
+        <h2 class="team-heading" data-pl="Dwóch ludzi.<br>Jedna misja." data-en="Two people.<br>One mission.">Dwóch ludzi.<br>Jedna misja.</h2>
+      </div>
+      <div class="team-grid">
+
+        <div class="team-card">
+          <div class="team-role" data-pl="Twórca stron" data-en="Web Creator">Twórca stron</div>
+          <h3 class="team-name">Tomasz Klucz</h3>
+          <p class="team-bio" data-pl="Zajmuję się realizacją stron internetowych od podstaw — bez szablonów, bez skrótów. Dbam o to, żeby efekt końcowy nie tylko wyglądał dobrze, ale przede wszystkim działał dla Twojego biznesu." data-en="I build websites from scratch — no templates, no shortcuts. The end result has to look good, but above all work for your business.">Zajmuję się realizacją stron internetowych od podstaw — bez szablonów, bez skrótów. Dbam o to, żeby efekt końcowy nie tylko wyglądał dobrze, ale przede wszystkim działał dla Twojego biznesu.</p>
+        </div>
+
+        <div class="team-divider"></div>
+
+        <div class="team-card">
+          <div class="team-role" data-pl="Strona biznesowa" data-en="Business Side">Strona biznesowa</div>
+          <h3 class="team-name">Łukasz Klucz</h3>
+          <p class="team-bio" data-pl="Wieloletnie doświadczenie w branży IT i prowadzeniu projektów. Odpowiada za stronę biznesową współpracy — umowy, faktury VAT i pełną dokumentację. Dzięki niemu możesz rozliczyć stronę jako koszt firmy i mieć pewność, że każdy projekt jest prowadzony profesjonalnie." data-en="Years of experience in IT and project management. Handles the business side of every collaboration — contracts, VAT invoices and full documentation. Thanks to him, you can write the site off as a business expense with full confidence it's handled professionally.">Wieloletnie doświadczenie w branży IT i prowadzeniu projektów. Odpowiada za stronę biznesową współpracy — umowy, faktury VAT i pełną dokumentację. Dzięki niemu możesz rozliczyć stronę jako koszt firmy i mieć pewność, że każdy projekt jest prowadzony profesjonalnie.</p>
+        </div>
+
+      </div>
+      <p class="team-footer" data-pl="Razem tworzymy coś prostego: jeden kontakt, profesjonalna realizacja, pełna dokumentacja." data-en="Together we keep it simple: one contact, professional delivery, full documentation.">Razem tworzymy coś prostego: jeden kontakt, profesjonalna realizacja, pełna dokumentacja.</p>
+    </div>
+  </section>
+
+
+  <!-- ===== CONTACT ===== -->
+  <section class="contact" id="contact" aria-label="Kontakt">
+    <!-- Video background — dual crossfade loop, lazy loaded -->
+    <video class="contact-video" id="contact-vid-a" muted playsinline preload="none" aria-hidden="true"></video>
+    <video class="contact-video" id="contact-vid-b" muted playsinline preload="none" aria-hidden="true" style="opacity:0"></video>
+    <div class="contact-video-overlay"></div>
+    <div class="container">
+
+      <div class="contact-inner">
+
+        <div>
+          <span class="section-label" data-pl="Zacznijmy współpracę" data-en="Let's Work Together">Zacznijmy współpracę</span>
+          <h2 class="contact-heading" data-pl="Gotowy na<br>swoją stronę?" data-en="Ready to build<br>your website?">Gotowy na<br>swoją stronę?</h2>
+          <p class="contact-sub" data-pl="Napisz mi o swoim projekcie, a odezwę się w ciągu 24 godzin. Bez zobowiązań, bez presji — tylko konkretna rozmowa o tym, czego potrzebujesz." data-en="Tell me about your project and I'll get back to you within 24 hours. No obligation, no pressure — just a real conversation.">
+            Napisz mi o swoim projekcie, a odezwę się w ciągu 24 godzin. Bez zobowiązań, bez presji — tylko konkretna rozmowa o tym, czego potrzebujesz.
+          </p>
+          <div class="contact-links">
+            <a href="mailto:buildbykey@gmail.com" class="contact-email">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+              buildbykey@gmail.com
+            </a>
+            <a href="https://www.instagram.com/buildbykey" target="_blank" rel="noopener noreferrer" class="contact-email" aria-label="Instagram BuildByKey">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              @buildbykey
+            </a>
+            <a href="tel:+48570511225" class="contact-email">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              +48 570 511 225
+            </a>
+          </div>
+          <p style="margin-top:16px;font-size:12px;color:var(--text-dim);">NIP: 1251708493</p>
+          <div class="contact-meta">
+            <div class="contact-meta-item">
+              <div class="contact-meta-dot"></div>
+              <span data-pl="Odpowiedź w ciągu 24 godzin" data-en="Response within 24 hours">Odpowiedź w ciągu 24 godzin</span>
+            </div>
+            <div class="contact-meta-item">
+              <div class="contact-meta-dot"></div>
+              <span data-pl="Bezpłatna konsultacja wstępna" data-en="Free initial consultation">Bezpłatna konsultacja wstępna</span>
+            </div>
+            <div class="contact-meta-item">
+              <div class="contact-meta-dot"></div>
+              <span data-pl="Wycena bez zobowiązań" data-en="No obligation quote">Wycena bez zobowiązań</span>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contact-form" action="https://formspree.io/f/xwvrandg" method="POST">
+          <input type="hidden" name="_subject" value="Nowe zapytanie — BuildByKey">
+          <div class="form-group">
+            <label class="form-label" for="name" data-pl="Twoje imię" data-en="Your name">Twoje imię</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Bartek Ostrowski" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email" data-pl="Adres e-mail" data-en="Email address">Adres e-mail</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="b.ostrowski@agencja.pl" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="budget" data-pl="Budżet (orientacyjnie)" data-en="Budget range">Budżet (orientacyjnie)</label>
+            <input class="form-input" type="text" id="budget" name="budget" data-placeholder-pl="np. 800–2000 zł" data-placeholder-en="e.g. €200–€500" placeholder="np. 800–2000 zł">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message" data-pl="Opisz swój projekt" data-en="Tell me about your project">Opisz swój projekt</label>
+            <textarea class="form-textarea" id="message" name="message" data-placeholder-pl="Potrzebuję strony dla mojej firmy..." data-placeholder-en="I need a website for my business..." placeholder="Potrzebuję strony dla mojej firmy..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit" id="form-btn" data-pl="Wyślij wiadomość →" data-en="Send message →">Wyślij wiadomość &rarr;</button>
+          <div class="form-success" id="form-success" role="status" aria-live="polite" data-pl="Wiadomość wysłana — odezwę się w ciągu 24 godzin." data-en="Message sent — I'll be in touch within 24 hours.">
+            Wiadomość wysłana &mdash; odezwę się w ciągu 24 godzin.
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  </main><!-- /.main -->
+
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-brand">Build<span>By</span>Key</span>
+        <ul class="footer-links">
+          <li><a href="#services"  data-pl="Oferta"        data-en="Services">Oferta</a></li>
+          <li><a href="#process"   data-pl="Jak to działa" data-en="Process">Jak to działa</a></li>
+          <li><a href="#pricing"   data-pl="Cennik"        data-en="Pricing">Cennik</a></li>
+          <li><a href="#about"     data-pl="O mnie"        data-en="About">O mnie</a></li>
+          <li><a href="#contact"   data-pl="Kontakt"       data-en="Contact">Kontakt</a></li>
+          <li><a href="https://www.instagram.com/buildbykey" target="_blank" rel="noopener" aria-label="Instagram BuildByKey">Instagram</a></li>
+          <li><a href="mailto:buildbykey@gmail.com">buildbykey@gmail.com</a></li>
+        </ul>
+        <span class="footer-copy">&copy; 2026 BuildByKey.</span>
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    /* ===== LANGUAGE SYSTEM ===== */
+    const PRICES = {
+      pl: { p1: '1&nbsp;500&nbsp;z&#x142;',    p2: '3&nbsp;000&nbsp;z&#x142;',       p3: 'od&nbsp;700&nbsp;z&#x142;' },
+      en: { p1: '&euro;350',                  p2: '&euro;700',                        p3: 'from&nbsp;&euro;165'       }
+    };
+
+    let currentLang = 'pl';
+
+    function setLang(lang) {
+      if (lang === currentLang) return;
+      currentLang = lang;
+
+      // Toggle button states (desktop + mobile)
+      ['pl', 'en'].forEach(l => {
+        const isPl = l === 'pl';
+        const isActive = l === lang;
+        document.getElementById('btn-' + l).classList.toggle('active', isActive);
+        document.getElementById('btn-' + l).setAttribute('aria-pressed', isActive);
+        const mob = document.getElementById('btn-' + l + '-m');
+        if (mob) { mob.classList.toggle('active', isActive); mob.setAttribute('aria-pressed', isActive); }
+      });
+
+      // Update html lang attribute
+      document.documentElement.lang = lang;
+
+      // Update page title and meta description
+      if (lang === 'pl') {
+        document.title = 'BuildByKey — Strony, które sprzedają';
+        document.querySelector('meta[name="description"]').content = 'BuildByKey — strony internetowe na zamówienie, landing page i sklepy internetowe. Tomasz Klucz. Strony, które sprzedają.';
+      } else {
+        document.title = 'BuildByKey — Websites That Sell';
+        document.querySelector('meta[name="description"]').content = 'BuildByKey — custom websites, landing pages, and e-commerce stores. Built by Tomasz Klucz. Websites that sell.';
+      }
+
+      // Update all data-pl / data-en elements
+      document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        const val = el.getAttribute('data-' + lang);
+        // For elements that contain child HTML (like h1 spans), use innerHTML
+        if (el.tagName === 'H1' || el.querySelector('span.accent')) {
+          el.innerHTML = val;
+        } else if (el.tagName === 'BUTTON' || el.tagName === 'A' || el.tagName === 'SPAN' || el.tagName === 'P' || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'LABEL' || el.tagName === 'DIV') {
+          el.innerHTML = val;
+        }
+      });
+
+      // Update prices
+      document.getElementById('price-1').innerHTML = PRICES[lang].p1;
+      document.getElementById('price-2').innerHTML = PRICES[lang].p2;
+      document.getElementById('price-3').innerHTML = PRICES[lang].p3;
+
+      // Update placeholder attributes
+      document.querySelectorAll('[data-placeholder-' + lang + ']').forEach(el => {
+        el.placeholder = el.getAttribute('data-placeholder-' + lang);
+      });
+    }
+
+    /* ===== HERO CROSSFADE LOOP ===== */
+    (function() {
+      const vidA = document.getElementById('hero-vid-a');
+      const vidB = document.getElementById('hero-vid-b');
+      if (!vidA || !vidB) return;
+
+      let active  = vidA;
+      let standby = vidB;
+      const FADE = 1.8; // seconds before end to start crossfade
+      let monitoring = false; // guard against re-entrant monitor calls
+
+      function crossfade() {
+        const prevDuration = active.duration; // capture before swap
+        standby.currentTime = 0;
+        standby.play();
+        standby.style.opacity = '1';
+        active.style.opacity  = '0';
+        const prev = active;
+        active  = standby;
+        standby = prev;
+        setTimeout(() => { standby.pause(); standby.currentTime = 0; }, 2000);
+        // Schedule next monitor after the new video completes one cycle minus fade
+        const delay = prevDuration && isFinite(prevDuration)
+          ? (prevDuration - FADE) * 1000 + 500
+          : 5000; // fallback if duration unavailable
+        monitoring = false;
+        setTimeout(scheduleMonitor, delay);
+      }
+
+      function monitor() {
+        if (active.duration && active.currentTime >= active.duration - FADE) {
+          crossfade();
+        } else {
+          requestAnimationFrame(monitor);
+        }
+      }
+
+      function scheduleMonitor() {
+        if (monitoring) return;
+        monitoring = true;
+        requestAnimationFrame(monitor);
+      }
+
+      vidA.addEventListener('canplay', scheduleMonitor, { once: true });
+    })();
+
+    /* ===== SCROLL REVEAL ===== */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => revealObserver.observe(el));
+
+    /* ===== SMOOTH SCROLL ===== */
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* ===== HAMBURGER MENU TOGGLE ===== */
+    (function() {
+      const hamburger = document.getElementById('nav-hamburger');
+      const navEl     = document.getElementById('nav');
+      const mobileMenu = document.getElementById('nav-mobile-menu');
+      if (!hamburger || !navEl || !mobileMenu) return;
+
+      function closeMenu() {
+        navEl.classList.remove('menu-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Otwórz menu');
+      }
+
+      hamburger.addEventListener('click', () => {
+        const isOpen = navEl.classList.toggle('menu-open');
+        hamburger.setAttribute('aria-expanded', String(isOpen));
+        hamburger.setAttribute('aria-label', isOpen ? 'Zamknij menu' : 'Otwórz menu');
+      });
+
+      // Close menu when a mobile link is clicked
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMenu);
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', e => {
+        if (!navEl.contains(e.target) && !mobileMenu.contains(e.target)) closeMenu();
+      });
+    })();
+
+    /* ===== CONTACT VIDEO DUAL CROSSFADE ===== */
+    (function() {
+      const vidA = document.getElementById('contact-vid-a');
+      const vidB = document.getElementById('contact-vid-b');
+      if (!vidA || !vidB) return;
+      const SRC = 'assets/images/zlote-wezly.mp4';
+      const FADE = 1.8;
+      let active = vidA, standby = vidB, started = false;
+
+      function addSource(vid) {
+        const s = document.createElement('source');
+        s.src = SRC; s.type = 'video/mp4';
+        vid.appendChild(s);
+      }
+
+      function crossfade() {
+        standby.currentTime = 0;
+        standby.play().catch(() => {});
+        standby.style.transition = 'opacity 1.5s ease';
+        standby.style.opacity = '1';
+        active.style.transition = 'opacity 1.5s ease';
+        active.style.opacity = '0';
+        const prev = active; active = standby; standby = prev;
+        setTimeout(() => { standby.pause(); standby.currentTime = 0; }, 2000);
+      }
+
+      function monitor() {
+        if (active.duration && active.currentTime >= active.duration - FADE) {
+          crossfade();
+          setTimeout(monitor, (active.duration - FADE) * 1000 + 500);
+        } else {
+          requestAnimationFrame(monitor);
+        }
+      }
+
+      function start() {
+        if (started) return;
+        started = true;
+        addSource(vidA); addSource(vidB);
+        vidA.load();
+        vidA.play().catch(() => {});
+        vidA.addEventListener('canplay', monitor, { once: true });
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) { start(); observer.disconnect(); } });
+      }, { rootMargin: '200px' });
+      observer.observe(vidA);
+    })();
+
+    /* ===== NAV SHADOW ON SCROLL ===== */
+    const nav = document.getElementById('nav');
+    if (nav) {
+      window.addEventListener('scroll', () => {
+        nav.style.boxShadow = window.scrollY > 60 ? '0 8px 40px rgba(0,0,0,0.5)' : 'none';
+      }, { passive: true });
+    }
+
+    /* ===== CONTACT FORM ===== */
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('form-btn');
+      const success = document.getElementById('form-success');
+      btn.innerHTML = currentLang === 'pl' ? 'Wysyłanie&hellip;' : 'Sending&hellip;';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(this.action, {
+          method: 'POST',
+          body: new FormData(this),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          btn.style.display = 'none';
+          success.innerHTML = currentLang === 'pl'
+            ? 'Wiadomość wysłana &mdash; odezwę się w ciągu 24 godzin.'
+            : 'Message sent &mdash; I\'ll be in touch within 24 hours.';
+          success.style.display = 'block';
+          success.setAttribute('tabindex', '-1');
+          success.focus();
+          this.reset();
+        } else {
+          await res.json().catch(() => ({}));
+          btn.innerHTML = currentLang === 'pl' ? 'Wyślij wiadomość &rarr;' : 'Send message &rarr;';
+          btn.disabled = false;
+          alert(currentLang === 'pl' ? 'Coś poszło nie tak. Napisz bezpośrednio na buildbykey@gmail.com' : 'Something went wrong. Email us directly at buildbykey@gmail.com');
+        }
+      } catch (err) {
+        btn.innerHTML = currentLang === 'pl' ? 'Wyślij wiadomość &rarr;' : 'Send message &rarr;';
+        btn.disabled = false;
+        alert(currentLang === 'pl' ? 'Brak połączenia. Napisz na buildbykey@gmail.com' : 'No connection. Email us at buildbykey@gmail.com');
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "projectName": "BuildByKey",
+  "version": "1.0",
+
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(index.html)",
+      "Write(assets/**)",
+      "Write(docs/**)",
+      "Write(deploy/**)",
+      "Write(.claude/**)",
+      "Write(CLAUDE.md)",
+      "Edit(index.html)",
+      "Edit(CLAUDE.md)",
+      "Edit(.claude/**)",
+      "Bash(mkdir *)",
+      "Bash(ls *)",
+      "Bash(echo *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | sh)"
+    ]
+  },
+
+  "roles": {
+    "designer": {
+      "description": "Handles all visual and UI work on index.html. Follows taste-skill framework rules strictly.",
+      "allowedAgents": ["design-guardian", "code-reviewer"],
+      "allowedCommands": ["taste", "review"],
+      "scope": ["index.html", "assets/"]
+    },
+    "seo-specialist": {
+      "description": "Audits and improves search engine visibility. Read-only access to HTML; writes to docs/.",
+      "allowedAgents": ["seo-auditor"],
+      "allowedCommands": ["seo"],
+      "scope": ["index.html", "docs/"]
+    },
+    "copywriter": {
+      "description": "Writes and improves all visible text content on the website.",
+      "allowedAgents": ["copywriter"],
+      "allowedCommands": ["improve-copy"],
+      "scope": ["index.html", "docs/content-plan.md"]
+    },
+    "performance-engineer": {
+      "description": "Audits and optimises Core Web Vitals, animation performance, and load time.",
+      "allowedAgents": ["performance-checker"],
+      "allowedCommands": ["review"],
+      "scope": ["index.html", "assets/"]
+    },
+    "owner": {
+      "description": "Tomasz Klucz — full access to all files, agents, commands, and settings.",
+      "allowedAgents": ["*"],
+      "allowedCommands": ["*"],
+      "scope": ["**"]
+    }
+  },
+
+  "defaults": {
+    "model": "claude-sonnet-4-6",
+    "designFramework": "taste-skill",
+    "designVariance": 8,
+    "motionIntensity": 6,
+    "visualDensity": 4,
+    "accentColor": "#c8a459",
+    "fontFamily": "Outfit"
+  }
+}

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio BuildByKey — zrealizowane projekty stron internetowych, landing page i sklepow e-commerce. Tomasz Klucz.">
+  <title>BuildByKey — Portfolio</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ===== DESIGN SYSTEM ===== */
+    :root {
+      --bg:            #09090b;
+      --surface:       #111113;
+      --surface-2:     #18181b;
+      --border:        rgba(255, 255, 255, 0.07);
+      --border-hover:  rgba(255, 255, 255, 0.14);
+      --text:          #fafaf9;
+      --text-muted:    #71717a;
+      --text-dim:      #3f3f46;
+      --accent:        #c8a459;
+      --accent-dim:    rgba(200, 164, 89, 0.10);
+      --accent-border: rgba(200, 164, 89, 0.30);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+      min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .accent { color: var(--accent); }
+
+    /* ===== NAVBAR ===== */
+    .nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: rgba(9, 9, 11, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px 6px 6px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      width: max-content;
+      transition: box-shadow 0.3s;
+    }
+
+    /* ===== HAMBURGER ===== */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      min-height: 44px;
+      min-width: 44px;
+      align-items: center;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 18px;
+      height: 1.5px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      transition: transform 0.25s, opacity 0.25s;
+      transform-origin: center;
+    }
+    .nav.menu-open .nav-hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav.menu-open .nav-hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav.menu-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile dropdown */
+    .nav-mobile-menu {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99;
+      background: rgba(9, 9, 11, 0.98);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 8px;
+      width: calc(100vw - 40px);
+      max-width: 320px;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nav.menu-open ~ .nav-mobile-menu { display: flex; }
+    .nav-mobile-menu a {
+      font-size: 15px;
+      color: var(--text-muted);
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-mobile-menu a:hover { background: var(--surface); color: var(--text); }
+    .nav-mobile-menu .nav-mobile-cta {
+      margin-top: 6px;
+      background: var(--accent);
+      color: #09090b;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 10px;
+      justify-content: center;
+    }
+    .nav-mobile-menu .nav-mobile-cta:hover { opacity: 0.9; background: var(--accent); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .nav-logo .logo-build { color: var(--accent); }
+    .nav-logo .logo-by    { color: var(--accent); font-weight: 600; opacity: 0.7; }
+    .nav-logo .logo-key   { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--accent); }
+
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 22px;
+      background: var(--accent);
+      color: #09090b;
+      border-radius: 100px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+    .nav-cta:active { transform: scale(0.98); }
+
+    /* ===== HERO ===== */
+    .page-hero {
+      padding-top: 140px;
+      padding-bottom: 80px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 80px;
+      align-items: end;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-heading {
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-right-text {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 400px;
+      margin-bottom: 40px;
+    }
+
+    .hero-stat {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .hero-stat-number {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: var(--text);
+    }
+    .hero-stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ===== FILTER BAR ===== */
+    .filter-section {
+      padding: 0 0 60px;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .filter-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      color: #09090b;
+      border-color: var(--accent);
+    }
+
+    /* ===== PORTFOLIO GRID ===== */
+    .portfolio-section {
+      padding: 0 0 100px;
+    }
+
+    .portfolio-item {
+      margin-bottom: 80px;
+    }
+    .portfolio-item:last-child {
+      margin-bottom: 0;
+    }
+    .portfolio-item.hidden {
+      display: none;
+    }
+
+    /* Featured — first item */
+    .portfolio-item.featured .portfolio-item-inner {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    /* Standard — alternating 2-col */
+    .portfolio-grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .portfolio-grid-row .portfolio-item {
+      margin-bottom: 0;
+    }
+
+    /* Screenshot placeholder */
+    .screenshot-placeholder {
+      aspect-ratio: 16 / 9;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .screenshot-placeholder:hover {
+      border-color: var(--border-hover);
+    }
+    .screenshot-placeholder span {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* Item details */
+    .portfolio-category {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 5px 14px;
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      background: var(--accent-dim);
+      margin-bottom: 16px;
+    }
+    .portfolio-details { padding-top: 20px; }
+    .featured .portfolio-details { padding-top: 0; }
+
+    .portfolio-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .portfolio-desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 65ch;
+      margin-bottom: 20px;
+    }
+
+    .portfolio-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .portfolio-stat-tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      padding: 6px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+    }
+
+    .portfolio-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      transition: opacity 0.2s;
+    }
+    .portfolio-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      padding: 100px 0;
+      border-top: 1px solid var(--border);
+    }
+    .cta-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .cta-heading {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .cta-body {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 500px;
+    }
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #09090b;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 36px 0; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .footer-brand { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+    .footer-brand span { color: var(--accent); }
+    .footer-copy { font-size: 13px; color: var(--text-dim); }
+    .footer-email a { font-size: 13px; color: var(--text-muted); transition: color 0.2s; }
+    .footer-email a:hover { color: var(--text); }
+
+    /* ===== SCROLL ANIMATIONS ===== */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up:nth-child(2) { transition-delay: 0.08s; }
+    .fade-up:nth-child(3) { transition-delay: 0.16s; }
+    .fade-up:nth-child(4) { transition-delay: 0.24s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .hero-right-text {
+        max-width: 100%;
+      }
+      .portfolio-item.featured .portfolio-item-inner {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .portfolio-grid-row {
+        grid-template-columns: 1fr;
+        gap: 60px;
+      }
+      .cta-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .cta-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      section, .cta-section { padding: 68px 0; }
+      .page-hero { padding-top: 110px; padding-bottom: 48px; }
+
+      /* Navbar mobile */
+      .nav {
+        gap: 0;
+        padding: 8px 8px 8px 18px;
+        width: calc(100vw - 40px);
+        max-width: 360px;
+        justify-content: space-between;
+        border-radius: 100px;
+      }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .hero-heading {
+        font-size: clamp(34px, 9vw, 48px);
+      }
+
+      .filter-bar {
+        gap: 6px;
+      }
+      .filter-btn {
+        font-size: 12px;
+        padding: 8px 16px;
+      }
+
+      .portfolio-stats {
+        gap: 10px;
+      }
+      .portfolio-stat-tag {
+        font-size: 12px;
+        padding: 5px 12px;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      /* Touch targets */
+      .btn-primary,
+      .btn-ghost,
+      .nav-cta,
+      .filter-btn {
+        min-height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="nav" id="navbar">
+    <a href="index.html" class="nav-logo" aria-label="BuildByKey — strona glowna">
+      <span class="logo-build">Build</span><span class="logo-by">By</span><span class="logo-key">Key</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Strona g&#322;&#243;wna</a></li>
+      <li><a href="portfolio.html" class="active">Portfolio</a></li>
+      <li><a href="index.html#contact">Kontakt</a></li>
+    </ul>
+    <a href="index.html#contact" class="nav-cta">Porozmawiajmy</a>
+    <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile dropdown -->
+  <div class="nav-mobile-menu">
+    <a href="index.html">Strona g&#322;&#243;wna</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="index.html#contact">Kontakt</a>
+    <a href="index.html#contact" class="nav-mobile-cta">Porozmawiajmy</a>
+  </div>
+
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-left fade-up">
+          <div class="section-label">Portfolio</div>
+          <h1 class="hero-heading">Zrealizowane<br>projekty</h1>
+        </div>
+        <div class="hero-right fade-up">
+          <p class="hero-right-text">Każdy projekt to konkretny cel — więcej leadów, wyższe konwersje, szybszy wzrost.</p>
+          <div class="hero-stat">
+            <div class="hero-stat-number">100%</div>
+            <div class="hero-stat-label">Projektów dostarczonych na czas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+  <!-- ===== PORTFOLIO ===== -->
+  <section class="portfolio-section">
+    <div class="container">
+
+      <!-- 1. Elizee — FEATURED -->
+      <div class="portfolio-item featured fade-up" data-category="firmowa">
+        <div class="portfolio-item-inner">
+          <div class="screenshot-placeholder" style="background:#FAF7F4;padding:0;overflow:hidden;display:block;">
+            <!-- Mini hero mockup Elizée -->
+            <div style="background:#FAF7F4;width:100%;height:100%;display:flex;flex-direction:column;font-family:'Outfit',sans-serif;">
+              <!-- Mock nav -->
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid #E5DDD6;flex-shrink:0;">
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:8px;color:#6B6B6B;letter-spacing:.06em;">Usługi</span>
+                  <span style="font-size:8px;color:#6B6B6B;letter-spacing:.06em;">O mnie</span>
+                </div>
+                <div style="font-size:10px;font-weight:600;color:#2C2C2C;letter-spacing:.08em;">✦ Elizée</div>
+                <div style="background:#2C2C2C;color:#FAF7F4;font-size:7px;font-weight:600;padding:4px 8px;border-radius:2px;letter-spacing:.06em;">Umów wizytę</div>
+              </div>
+              <!-- Mock hero content -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;">
+                <!-- Left: text -->
+                <div style="padding:16px 20px;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+                  <span style="font-size:7px;color:#6B6B6B;letter-spacing:.14em;text-transform:uppercase;">Profesjonalna wizażystka</span>
+                  <div style="font-size:28px;font-weight:400;color:#2C2C2C;line-height:1;font-style:italic;letter-spacing:-.01em;">Elizée</div>
+                  <p style="font-size:7px;color:#6B6B6B;line-height:1.5;margin:0;">Smokey Eye · wieczorowy<br>dzienny · Glamour</p>
+                  <div style="background:#2C2C2C;color:#FAF7F4;font-size:7px;font-weight:600;padding:5px 10px;border-radius:2px;letter-spacing:.06em;align-self:flex-start;margin-top:4px;">Umów wizytę</div>
+                </div>
+                <!-- Right: photo -->
+                <div style="overflow:hidden;">
+                  <img src="portfolio/elizee/images/hero-main.jpg" alt="Elizée hero" style="width:100%;height:100%;object-fit:cover;object-position:top center;">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio-details">
+            <div class="portfolio-category">Strona firmowa</div>
+            <h3 class="portfolio-title">Elizee — Wizazystka</h3>
+            <p class="portfolio-desc">Strona wizytówkowa dla profesjonalnej wizażystki — cennik uslug, portfolio zdjęciowe i formularz rezerwacji. Zaprojektowana mobile-first z mysla o klientach szukajacych uslug beauty.</p>
+            <a href="portfolio/elizee/index.html" class="portfolio-link">Zobacz projekt &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row: Planetarium + TechSpec -->
+      <div class="portfolio-grid-row">
+        <!-- 2. Kosmiczne Planetarium -->
+        <div class="portfolio-item fade-up" data-category="landing">
+          <!-- Mini hero mockup Planetarium -->
+          <div class="screenshot-placeholder" style="background:#030712;padding:0;overflow:hidden;display:block;">
+            <div style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;">
+              <!-- Nebula bg -->
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 35%, rgba(88,56,230,0.3) 0%, transparent 55%), radial-gradient(ellipse at 20% 65%, rgba(14,100,220,0.22) 0%, transparent 50%);"></div>
+              <!-- Stars -->
+              <span style="position:absolute;top:9%;left:16%;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.9;"></span>
+              <span style="position:absolute;top:18%;left:48%;width:1px;height:1px;background:#fff;border-radius:50%;opacity:.65;"></span>
+              <span style="position:absolute;top:28%;left:74%;width:2px;height:2px;background:#e0e8ff;border-radius:50%;opacity:.8;"></span>
+              <span style="position:absolute;top:42%;left:90%;width:1px;height:1px;background:#fff;border-radius:50%;opacity:.55;"></span>
+              <span style="position:absolute;top:58%;left:30%;width:1px;height:1px;background:#fff;border-radius:50%;opacity:.7;"></span>
+              <span style="position:absolute;top:72%;left:62%;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.6;"></span>
+              <span style="position:absolute;top:82%;left:12%;width:1px;height:1px;background:#fff;border-radius:50%;opacity:.5;"></span>
+              <span style="position:absolute;top:14%;left:88%;width:1px;height:1px;background:#c8d0ff;border-radius:50%;opacity:.7;"></span>
+              <span style="position:absolute;top:65%;left:80%;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.75;"></span>
+              <span style="position:absolute;top:35%;left:5%;width:1px;height:1px;background:#fff;border-radius:50%;opacity:.6;"></span>
+              <!-- Planet -->
+              <div style="position:absolute;top:14%;right:8%;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 32% 30%, #1e3a6e, #07102a);border:1px solid rgba(120,150,255,0.25);"></div>
+              <!-- Nav -->
+              <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;">
+                <div style="font-size:9px;font-weight:700;color:#fff;letter-spacing:.07em;">✦ PLANETARIUM</div>
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:7px;color:rgba(255,255,255,.4);">Ekspozycje</span>
+                  <span style="font-size:7px;color:rgba(255,255,255,.4);">Cennik</span>
+                  <span style="font-size:7px;color:rgba(255,255,255,.4);">Kontakt</span>
+                </div>
+              </div>
+              <!-- Hero text -->
+              <div style="position:relative;z-index:1;padding:6px 16px 16px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+                <span style="font-size:6px;color:rgba(160,185,255,0.75);letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px;display:block;">Centrum Astronomiczne</span>
+                <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.03em;margin-bottom:7px;">Kosmiczne<br>Planetarium</div>
+                <p style="font-size:7px;color:rgba(255,255,255,.45);line-height:1.5;margin:0 0 10px;max-width:55%;">Odkryj tajemnice wszechświata —<br>pokazy na żywo, animowane gwiazdozbiory.</p>
+                <div style="background:rgba(100,120,255,0.18);border:1px solid rgba(120,150,255,0.45);color:rgba(190,205,255,0.95);font-size:7px;font-weight:600;padding:5px 11px;border-radius:4px;align-self:flex-start;letter-spacing:.05em;">Zarezerwuj bilet →</div>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio-details">
+            <div class="portfolio-category">Landing Page</div>
+            <h3 class="portfolio-title">Kosmiczne Planetarium</h3>
+            <p class="portfolio-desc">Landing page dla centrum astronomicznego — animowane gwiazdozbiory, interaktywna mapa nieba i system rezerwacji biletów online.</p>
+            <a href="portfolio/planetarium.html" class="portfolio-link">Zobacz projekt &#8594;</a>
+          </div>
+        </div>
+
+        <!-- 3. TechSpec — Sprzet Komputerowy -->
+        <div class="portfolio-item fade-up" data-category="firmowa">
+          <!-- Mini hero mockup TechSpec -->
+          <div class="screenshot-placeholder" style="background:#0a0d12;padding:0;overflow:hidden;display:block;">
+            <div style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;">
+              <!-- Grid pattern -->
+              <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.09;" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="ts-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#22c55e" stroke-width=".6"/></pattern></defs><rect width="100%" height="100%" fill="url(#ts-grid)"/></svg>
+              <!-- Glow -->
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 78% 50%, rgba(34,197,94,0.14) 0%, transparent 55%);"></div>
+              <!-- Nav -->
+              <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+                <div style="font-size:10px;font-weight:800;color:#fff;letter-spacing:-.01em;">TechSpec</div>
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:7px;color:rgba(255,255,255,.35);">Laptopy</span>
+                  <span style="font-size:7px;color:rgba(255,255,255,.35);">Desktopy</span>
+                  <span style="font-size:7px;color:rgba(255,255,255,.35);">Porównanie</span>
+                </div>
+              </div>
+              <!-- Hero: 2 col -->
+              <div style="position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;flex:1;padding:14px 16px;gap:12px;align-items:center;">
+                <!-- Left text -->
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <span style="font-size:6px;color:rgba(34,197,94,0.75);letter-spacing:.14em;text-transform:uppercase;">Sprzęt komputerowy</span>
+                  <div style="font-size:17px;font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.03em;">Twój idealny<br>sprzęt</div>
+                  <p style="font-size:7px;color:rgba(255,255,255,.38);line-height:1.4;margin:0;">Porównaj konfiguracje,<br>wybierz najlepszą dla siebie.</p>
+                  <div style="background:#22c55e;color:#030a06;font-size:7px;font-weight:700;padding:5px 10px;border-radius:4px;align-self:flex-start;letter-spacing:.04em;margin-top:3px;">Konfiguruj →</div>
+                </div>
+                <!-- Right: laptop illustration -->
+                <div style="display:flex;align-items:center;justify-content:center;">
+                  <div style="position:relative;width:76px;">
+                    <!-- Screen -->
+                    <div style="width:76px;height:50px;border:1.5px solid rgba(34,197,94,0.4);border-radius:4px 4px 0 0;background:rgba(34,197,94,0.04);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                      <div style="width:52px;height:30px;display:flex;flex-direction:column;gap:3px;justify-content:center;">
+                        <div style="height:2px;background:rgba(34,197,94,0.5);border-radius:1px;width:80%;"></div>
+                        <div style="height:1.5px;background:rgba(255,255,255,0.2);border-radius:1px;width:60%;"></div>
+                        <div style="height:1.5px;background:rgba(255,255,255,0.2);border-radius:1px;width:70%;"></div>
+                      </div>
+                    </div>
+                    <!-- Base -->
+                    <div style="height:4px;background:rgba(34,197,94,0.2);border-radius:0 0 3px 3px;border:1px solid rgba(34,197,94,0.25);border-top:none;"></div>
+                    <div style="height:2px;width:36px;background:rgba(34,197,94,0.15);border-radius:0 0 4px 4px;margin:0 auto;border:1px solid rgba(34,197,94,0.2);border-top:none;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio-details">
+            <div class="portfolio-category">Strona firmowa</div>
+            <h3 class="portfolio-title">TechSpec — Sprzet Komputerowy</h3>
+            <p class="portfolio-desc">Strona prezentacyjna konfiguracji laptopow i komputerow z porownaniem specyfikacji, hero na wideo i interaktywnym kalkulatorem.</p>
+            <a href="portfolio/computer.html" class="portfolio-link">Zobacz projekt &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===== CTA SECTION ===== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-grid">
+        <div class="cta-left fade-up">
+          <h2 class="cta-heading">Twój projekt może być następny</h2>
+          <p class="cta-body">Każda strona zaczyna się od rozmowy. Powiedz mi o swoim projekcie — wrócimy do Ciebie w 24 godziny.</p>
+        </div>
+        <div class="cta-buttons fade-up">
+          <a href="index.html#contact" class="btn-primary">Zacznijmy projekt &#8594;</a>
+          <a href="index.html#pricing" class="btn-ghost">Sprawdz wycene</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-brand">Build<span>By</span>Key</span>
+        <span class="footer-copy">&copy; 2025 BuildByKey. Wszelkie prawa zastrzeżone.</span>
+        <span class="footer-email"><a href="mailto:hello@buildbykey.com">hello@buildbykey.com</a></span>
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    /* ===== HAMBURGER TOGGLE ===== */
+    const hamburger = document.querySelector('.nav-hamburger');
+    const nav = document.querySelector('.nav');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => {
+        const open = nav.classList.toggle('menu-open');
+        hamburger.setAttribute('aria-expanded', open);
+      });
+    }
+
+    /* ===== FILTER LOGIC ===== */
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const portfolioItems = document.querySelectorAll('.portfolio-item[data-category]');
+    const gridRows = document.querySelectorAll('.portfolio-grid-row');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active state
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+
+        // Show/hide individual items
+        portfolioItems.forEach(item => {
+          if (filter === 'all' || item.getAttribute('data-category') === filter) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+
+        // Show/hide grid rows if all children are hidden
+        gridRows.forEach(row => {
+          const visibleChildren = row.querySelectorAll('.portfolio-item:not(.hidden)');
+          row.style.display = visibleChildren.length === 0 ? 'none' : '';
+        });
+      });
+    });
+
+    /* ===== SCROLL REVEAL ===== */
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          fadeObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+    /* ===== CLOSE MOBILE MENU ON LINK CLICK ===== */
+    document.querySelectorAll('.nav-mobile-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('menu-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+
+</body>
+</html>

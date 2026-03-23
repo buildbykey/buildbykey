@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Specyfikacja — Stacja Robocza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090b;
+      --surface:      #111113;
+      --surface-2:    #18181b;
+      --border:       rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --text:         #fafaf9;
+      --text-muted:   #71717a;
+      --text-dim:     #3f3f46;
+      --accent:       #c8a459;
+      --accent-dim:   rgba(200,164,89,0.10);
+      --accent-border: rgba(200,164,89,0.28);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Slides ── */
+    .deck {
+      width: 100%; height: 100%;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.6s cubic-bezier(0.4,0,0.2,1);
+      transform: translateY(20px);
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    .slide.exit {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    /* ── Nav dots ── */
+    .nav-dots {
+      position: fixed; right: 36px; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 10px;
+      z-index: 100;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .dot.active {
+      background: var(--accent);
+      transform: scale(1.4);
+    }
+
+    /* ── Slide counter ── */
+    .counter {
+      position: fixed; bottom: 32px; right: 36px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      color: var(--text-dim);
+      z-index: 100;
+    }
+    .counter span { color: var(--accent); }
+
+    /* ── Arrow nav ── */
+    .arrow {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 12px; z-index: 100;
+    }
+    .arrow-btn {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+      font-size: 16px;
+    }
+    .arrow-btn:hover {
+      border-color: var(--accent-border);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .arrow-btn:active { transform: scale(0.97); }
+
+    /* ── Label tag ── */
+    .label {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .label::before {
+      content: '';
+      display: block; width: 20px; height: 1px;
+      background: var(--accent);
+    }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      padding: 0 48px;
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SLIDE 1 — VIDEO HERO
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    #slide-1 {
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .video-bg {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
+    .video-bg video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.22;
+      filter: grayscale(40%);
+    }
+    .video-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        var(--bg) 0%,
+        transparent 30%,
+        transparent 70%,
+        var(--bg) 100%
+      );
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      text-align: center;
+    }
+    .hero-content .label { justify-content: center; }
+    .hero-content .label::before { display: none; }
+    .hero-title {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .scroll-hint {
+      position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+      z-index: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim);
+      animation: float 2.4s ease-in-out infinite;
+    }
+    .scroll-hint svg { opacity: 0.4; }
+    @keyframes float {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SLIDE 2 — OVERVIEW SPLIT
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .split-left h2 {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .split-left p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-width: 42ch;
+    }
+    .model-badge {
+      display: inline-block;
+      margin-top: 32px;
+      padding: 10px 20px;
+      border: 1px solid var(--accent-border);
+      background: var(--accent-dim);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .spec-cell {
+      background: var(--surface);
+      padding: 24px 22px;
+      transition: background 0.2s;
+    }
+    .spec-cell:hover { background: var(--surface-2); }
+    .spec-cell-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .spec-cell-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .spec-cell-value small {
+      display: block;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SLIDE 3 — CPU + GPU
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .full-center {
+      width: 100%; display: flex; flex-direction: column;
+    }
+    .slide-heading {
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 48px;
+    }
+    .divider-list {
+      display: flex; flex-direction: column;
+    }
+    .divider-row {
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      align-items: center;
+      gap: 32px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .divider-row:first-child { border-top: 1px solid var(--border); }
+    .divider-row:hover { border-bottom-color: var(--accent-border); }
+    .divider-row-name {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .divider-row-value {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .divider-row-value span {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+    .bar-wrap {
+      width: 140px;
+    }
+    .bar-track {
+      height: 3px;
+      background: var(--surface-2);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 100px;
+      transition: width 0.8s cubic-bezier(0.4,0,0.2,1) 0.2s;
+      width: 0;
+    }
+    .slide.active .bar-fill { width: var(--w); }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SLIDE 4 — EKRAN + ŁĄCZNOŚĆ
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+    }
+    .panel-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-title::before {
+      content: ''; width: 16px; height: 1px; background: var(--accent);
+    }
+    .stat-block {
+      margin-bottom: 28px;
+    }
+    .stat-block:last-child { margin-bottom: 0; }
+    .stat-num {
+      font-size: clamp(32px, 3.5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-num sub {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-muted);
+      vertical-align: baseline;
+      margin-left: 4px;
+    }
+    .stat-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .chip-list {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 8px;
+    }
+    .chip {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface-2);
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SLIDE 5 — PODSUMOWANIE
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 48px;
+    }
+    .sum-cell {
+      background: var(--surface);
+      padding: 36px 32px;
+      transition: background 0.2s;
+    }
+    .sum-cell:hover { background: var(--surface-2); }
+    .sum-icon {
+      width: 36px; height: 36px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .sum-icon svg { stroke: var(--accent); }
+    .sum-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .sum-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .sum-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Progress bar top ── */
+    .progress-line {
+      position: fixed; top: 0; left: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      z-index: 200;
+    }
+
+    @media (max-width: 768px) {
+      .split, .two-col { grid-template-columns: 1fr; gap: 32px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .divider-row { grid-template-columns: 1fr 1fr; }
+      .bar-wrap { display: none; }
+      .container { padding: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-line" id="progress"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ══ SLIDE 1 — HERO VIDEO ══ -->
+  <section class="slide active" id="slide-1">
+    <div class="video-bg">
+      <video autoplay muted loop playsinline>
+        <source src="C:/Users/tomci/Downloads/portfolio 2.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-content">
+      <div class="label">Specyfikacja techniczna</div>
+      <h1 class="hero-title">Stacja<br><em>Robocza</em></h1>
+      <p class="hero-sub">Kompletny przegląd parametrów sprzętowych — wydajność, ekran, łączność.</p>
+    </div>
+    <div class="scroll-hint">
+      <svg width="16" height="24" viewBox="0 0 16 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="1" y="1" width="14" height="22" rx="7"/>
+        <line x1="8" y1="6" x2="8" y2="10"/>
+      </svg>
+      Przewiń dalej
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 2 — PRZEGLĄD ══ -->
+  <section class="slide" id="slide-2">
+    <div class="container">
+      <div class="split">
+        <div class="split-left">
+          <div class="label">Przegląd</div>
+          <h2 class="slide-heading" style="margin-bottom:16px;">Laptop<br>Deweloperski</h2>
+          <p>Maszyna zaprojektowana z myślą o wielogodzinnej pracy twórczej — kodowaniu, edycji wideo, projektowaniu grafiki i obsłudze wielu aplikacji jednocześnie.</p>
+          <div class="model-badge">Dell XPS 15 9530 — 2024</div>
+        </div>
+        <div class="spec-grid">
+          <div class="spec-cell">
+            <div class="spec-cell-label">Procesor</div>
+            <div class="spec-cell-value">Intel Core i9<small>13. generacja · 24 rdzenie</small></div>
+          </div>
+          <div class="spec-cell">
+            <div class="spec-cell-label">Pamięć RAM</div>
+            <div class="spec-cell-value">64 GB<small>DDR5 · 5200 MHz</small></div>
+          </div>
+          <div class="spec-cell">
+            <div class="spec-cell-label">Karta graficzna</div>
+            <div class="spec-cell-value">RTX 4070<small>8 GB GDDR6 · Laptop GPU</small></div>
+          </div>
+          <div class="spec-cell">
+            <div class="spec-cell-label">Dysk SSD</div>
+            <div class="spec-cell-value">2 TB<small>NVMe PCIe 4.0 · 7000 MB/s</small></div>
+          </div>
+          <div class="spec-cell">
+            <div class="spec-cell-label">Ekran</div>
+            <div class="spec-cell-value">15.6" OLED<small>3.5K · 120 Hz · VESA HDR 500</small></div>
+          </div>
+          <div class="spec-cell">
+            <div class="spec-cell-label">Bateria</div>
+            <div class="spec-cell-value">86 Wh<small>do ~10h pracy biurowej</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 3 — CPU / GPU / PAMIĘĆ ══ -->
+  <section class="slide" id="slide-3">
+    <div class="container">
+      <div class="full-center">
+        <div class="label">Wydajność</div>
+        <h2 class="slide-heading">Rdzeń systemu</h2>
+        <div class="divider-list">
+          <div class="divider-row">
+            <div class="divider-row-name">Procesor</div>
+            <div class="divider-row-value">Intel Core i9-13900H <span>5.4 GHz Turbo · 24 rdzenie / 32 wątki · 45 W TDP</span></div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="--w:93%"></div></div></div>
+          </div>
+          <div class="divider-row">
+            <div class="divider-row-name">Karta graficzna</div>
+            <div class="divider-row-value">NVIDIA RTX 4070 <span>8 GB GDDR6 · 3584 CUDA Cores · DLSS 3</span></div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="--w:86%"></div></div></div>
+          </div>
+          <div class="divider-row">
+            <div class="divider-row-name">Pamięć RAM</div>
+            <div class="divider-row-value">64 GB DDR5 <span>Dual-channel · 5200 MHz · LPDDR5</span></div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="--w:90%"></div></div></div>
+          </div>
+          <div class="divider-row">
+            <div class="divider-row-name">Dysk główny</div>
+            <div class="divider-row-value">2 TB NVMe SSD <span>PCIe Gen 4 · Odczyt 7 000 MB/s · Zapis 6 500 MB/s</span></div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="--w:88%"></div></div></div>
+          </div>
+          <div class="divider-row">
+            <div class="divider-row-name">Intel Iris Xe</div>
+            <div class="divider-row-value">Grafika zintegrowana <span>tryb oszczędzania energii · automatyczne przełączanie GPU</span></div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="--w:45%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 4 — EKRAN + ŁĄCZNOŚĆ ══ -->
+  <section class="slide" id="slide-4">
+    <div class="container">
+      <div class="label">Szczegóły</div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-title">Ekran</div>
+          <div class="stat-block">
+            <div class="stat-num">3.5K<sub>OLED</sub></div>
+            <div class="stat-desc">3456 × 2160 px · 16:10 · 254 ppi</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">120<sub>Hz</sub></div>
+            <div class="stat-desc">Adaptacyjne odświeżanie · G-Sync Compatible</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">400<sub>nits</sub></div>
+            <div class="stat-desc">VESA DisplayHDR 500 · DCI-P3 100%</div>
+          </div>
+          <div class="chip-list">
+            <span class="chip">Gorilla Glass</span>
+            <span class="chip">Anti-glare</span>
+            <span class="chip">Touch</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Łączność i porty</div>
+          <div class="stat-block">
+            <div class="stat-num">Wi-Fi 6E</div>
+            <div class="stat-desc">Bluetooth 5.3 · 6 GHz band</div>
+          </div>
+          <div class="chip-list" style="margin-bottom:24px;">
+            <span class="chip">2× Thunderbolt 4</span>
+            <span class="chip">USB-A 3.2</span>
+            <span class="chip">SD Card</span>
+            <span class="chip">3.5mm Jack</span>
+            <span class="chip">HDMI 2.1</span>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">720p<sub>FHD opt.</sub></div>
+            <div class="stat-desc">Kamera · IR Face Unlock · Windows Hello</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">130 W</div>
+            <div class="stat-desc">Ładowarka USB-C PD · pełne ładowanie ~75 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 5 — PODSUMOWANIE ══ -->
+  <section class="slide" id="slide-5">
+    <div class="container">
+      <div class="label">Podsumowanie</div>
+      <h2 class="slide-heading" style="font-size:clamp(28px,3vw,42px); margin-bottom:0;">
+        Kompletna specyfikacja<br>w pigułce
+      </h2>
+      <div class="summary-grid">
+        <div class="sum-cell">
+          <div class="sum-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+            </svg>
+          </div>
+          <div class="sum-label">Model</div>
+          <div class="sum-val">Dell XPS 15</div>
+          <div class="sum-sub">9530 · edycja 2024</div>
+        </div>
+        <div class="sum-cell">
+          <div class="sum-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <div class="sum-label">Procesor</div>
+          <div class="sum-val">i9-13900H</div>
+          <div class="sum-sub">24 rdzenie · 5.4 GHz</div>
+        </div>
+        <div class="sum-cell">
+          <div class="sum-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+              <rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8V6M10 8V6M14 8V6M18 8V6"/>
+            </svg>
+          </div>
+          <div class="sum-label">RAM</div>
+          <div class="sum-val">64 GB DDR5</div>
+          <div class="sum-sub">5200 MHz dual-channel</div>
+        </div>
+        <div class="sum-cell">
+          <div class="sum-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+              <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/>
+            </svg>
+          </div>
+          <div class="sum-label">Karta graficzna</div>
+          <div class="sum-val">RTX 4070</div>
+          <div class="sum-sub">8 GB GDDR6 · DLSS 3</div>
+        </div>
+        <div class="sum-cell">
+          <div class="sum-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="sum-label">Dysk</div>
+          <div class="sum-val">2 TB NVMe</div>
+          <div class="sum-sub">PCIe 4.0 · 7 000 MB/s</div>
+        </div>
+        <div class="sum-cell">
+          <div class="sum-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+              <rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>
+            </svg>
+          </div>
+          <div class="sum-label">Ekran</div>
+          <div class="sum-val">15.6" OLED</div>
+          <div class="sum-sub">3.5K · 120 Hz · HDR500</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /deck -->
+
+<!-- Nav dots -->
+<div class="nav-dots" id="dots"></div>
+
+<!-- Counter -->
+<div class="counter"><span id="cur">01</span> / 05</div>
+
+<!-- Arrows -->
+<div class="arrow">
+  <button class="arrow-btn" id="prev" title="Poprzedni">&#8592;</button>
+  <button class="arrow-btn" id="next" title="Następny">&#8594;</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const dotsEl = document.getElementById('dots');
+  const curEl  = document.getElementById('cur');
+  const prog   = document.getElementById('progress');
+  let current  = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(idx) {
+    if (idx === current) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => slides[current].classList.remove('exit'), 600);
+    current = (idx + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    update();
+  }
+
+  function update() {
+    document.querySelectorAll('.dot').forEach((d, i) =>
+      d.classList.toggle('active', i === current)
+    );
+    const n = String(current + 1).padStart(2, '0');
+    curEl.textContent = n;
+    const pct = ((current) / (slides.length - 1)) * 100;
+    prog.style.width = pct + '%';
+  }
+
+  document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                     goTo(current - 1);
+  });
+
+  // Touch swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend',   e => {
+    const dx = tx - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) dx > 0 ? goTo(current + 1) : goTo(current - 1);
+  });
+
+  update();
+</script>
+</body>
+</html>

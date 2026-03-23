@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"c:\\\\Users\\\\tomci\\\\Documents\\\\Strona Elizee\\\\images\"\" && echo \"---\" && ls \"c:UserstomciDocumentsStrona Elizee\"\")",
+      "Bash(ipconfig)"
+    ]
+  }
+}

@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* ===== RESET ===== */
@@ -131,8 +131,18 @@
       align-items: center;
       gap: 32px;
       width: max-content;
-      transition: box-shadow 0.3s;
     }
+    .nav::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .nav.scrolled::after { opacity: 1; }
 
     /* ===== HAMBURGER MENU ===== */
     .nav-hamburger {
@@ -322,7 +332,7 @@
       line-height: 1.7;
       max-width: 520px;
       margin-bottom: 52px;
-      font-weight: 300;
+      font-weight: 400;
       letter-spacing: 0.01em;
     }
 
@@ -595,7 +605,7 @@
     .process-step { background: var(--surface); padding: 40px 30px; }
     .step-num {
       font-size: 44px;
-      font-weight: 900;
+      font-weight: 800;
       color: var(--text-dim);
       line-height: 1;
       margin-bottom: 20px;
@@ -764,7 +774,7 @@
       border-radius: 12px;
       background: var(--surface);
       overflow: hidden;
-      transition: border-color 0.3s ease, transform 0.3s ease;
+      transition: transform 0.3s ease;
       text-decoration: none;
     }
     .portfolio-card:hover {
@@ -1244,10 +1254,10 @@
   <!-- ===== HERO ===== -->
   <section class="hero" aria-label="Hero">
     <!-- Video background — dual crossfade loop -->
-    <video class="hero-video" id="hero-vid-a" autoplay muted playsinline preload="auto" aria-hidden="true">
+    <video class="hero-video" id="hero-vid-a" autoplay muted playsinline preload="metadata" aria-hidden="true">
       <source src="assets/images/aurora-hero.mp4" type="video/mp4">
     </video>
-    <video class="hero-video" id="hero-vid-b" muted playsinline preload="auto" style="opacity:0;" aria-hidden="true">
+    <video class="hero-video" id="hero-vid-b" muted playsinline preload="metadata" style="opacity:0;" aria-hidden="true">
       <source src="assets/images/aurora-hero.mp4" type="video/mp4">
     </video>
     <div class="hero-video-overlay"></div>
@@ -1864,18 +1874,11 @@
         setTimeout(scheduleMonitor, delay);
       }
 
-      function monitor() {
-        if (active.duration && active.currentTime >= active.duration - FADE) {
-          crossfade();
-        } else {
-          requestAnimationFrame(monitor);
-        }
-      }
-
       function scheduleMonitor() {
-        if (monitoring) return;
+        if (monitoring || !active.duration || !isFinite(active.duration)) return;
         monitoring = true;
-        requestAnimationFrame(monitor);
+        const delay = Math.max(0, (active.duration - active.currentTime - FADE) * 1000);
+        setTimeout(() => { monitoring = false; crossfade(); }, delay);
       }
 
       vidA.addEventListener('canplay', scheduleMonitor, { once: true });
@@ -1969,13 +1972,10 @@
         setTimeout(() => { standby.pause(); standby.currentTime = 0; }, 2000);
       }
 
-      function monitor() {
-        if (active.duration && active.currentTime >= active.duration - FADE) {
-          crossfade();
-          setTimeout(monitor, (active.duration - FADE) * 1000 + 500);
-        } else {
-          requestAnimationFrame(monitor);
-        }
+      function scheduleNext() {
+        if (!active.duration || !isFinite(active.duration)) return;
+        const delay = Math.max(0, (active.duration - active.currentTime - FADE) * 1000);
+        setTimeout(() => { crossfade(); scheduleNext(); }, delay);
       }
 
       function start() {
@@ -1984,7 +1984,7 @@
         addSource(vidA); addSource(vidB);
         vidA.load();
         vidA.play().catch(() => {});
-        vidA.addEventListener('canplay', monitor, { once: true });
+        vidA.addEventListener('canplay', scheduleNext, { once: true });
       }
 
       const observer = new IntersectionObserver((entries) => {
@@ -1997,7 +1997,7 @@
     const nav = document.getElementById('nav');
     if (nav) {
       window.addEventListener('scroll', () => {
-        nav.style.boxShadow = window.scrollY > 60 ? '0 8px 40px rgba(0,0,0,0.5)' : 'none';
+        nav.classList.toggle('scrolled', window.scrollY > 60);
       }, { passive: true });
     }
 
